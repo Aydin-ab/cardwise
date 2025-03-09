@@ -50,8 +50,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      - name: Install Ruff (if missing)
+        run: pip install ruff  # ✅ Ensure Ruff is installed before running it
+
       - name: Run Ruff (Lint & Format Check)
-        uses: astral-sh/ruff-action@v3
+        run: ruff check .
+
 
   type-check:
     needs: setup
@@ -67,6 +71,9 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
+      - name: Install Ruff (if missing)
+        run: pip install pyright  # ✅ Ensure pyright is installed before running it
 
       - name: Run Pyright
         run: pyright
