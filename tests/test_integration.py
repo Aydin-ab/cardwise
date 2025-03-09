@@ -1,6 +1,8 @@
-import pytest
-import os
 import json
+import os
+
+import pytest
+
 from utils.fuzzy_matcher import load_fresh_offers
 
 # ✅ Base path for sample files

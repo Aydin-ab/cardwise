@@ -1,8 +1,10 @@
-import os
 import json
+import os
+
 from bs4 import BeautifulSoup
+
+from bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
 from utils.html_parser import read_html
-from bank_parser.exceptions import MissingHTMLFileError, InvalidOfferDataError
 
 
 def parse_chase_offers(html_path=None, save_to=None):

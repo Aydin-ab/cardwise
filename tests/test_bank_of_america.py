@@ -1,8 +1,10 @@
-import pytest
-import os
 import json
+import os
+
+import pytest
+
 from bank_parser.bank_of_america import parse_bank_of_america_offers
-from bank_parser.exceptions import MissingHTMLFileError, InvalidOfferDataError
+from bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
 
 # ✅ Base path for sample files
 SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "samples")

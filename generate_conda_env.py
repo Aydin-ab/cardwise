@@ -1,15 +1,16 @@
-import toml
 import subprocess
+
+import toml
+
 
 # Function to check if a package is available in Conda
 def is_available_in_conda(package):
     try:
-        result = subprocess.run(
-            ["conda", "search", package], capture_output=True, text=True
-        )
+        result = subprocess.run(["conda", "search", package], capture_output=True, text=True)
         return package in result.stdout  # If package name appears in Conda output
     except Exception:
         return False  # Fail-safe: Assume package is not available
+
 
 # Load dependencies from pyproject.toml
 with open("pyproject.toml", "r") as f:

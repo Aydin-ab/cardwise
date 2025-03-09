@@ -1,5 +1,7 @@
-from rapidfuzz import process, fuzz
 import json
+
+from rapidfuzz import fuzz, process
+
 from bank_parser.bank_of_america import parse_bank_of_america_offers
 from bank_parser.capital_one import parse_capital_one_offers
 from bank_parser.chase import parse_chase_offers

@@ -1,4 +1,5 @@
 import pytest
+
 from utils.fuzzy_matcher import find_best_matches, get_offers_for_company, load_fresh_offers
 
 
@@ -53,7 +54,8 @@ def test_get_offers_with_partial_bank_failures(sample_offers, monkeypatch):
         return (
             [sample_offers[0]],  # ✅ Simulate successful parsing for Bank of America
             [
-                "❌ Error: The HTML file 'missing.html' for Chase does not exist. Please provide a valid file."
+                "❌ Error: The HTML file 'missing.html' for Chase does not exist. "
+                "Please provide a valid file."
             ],  # ✅ Simulate Chase failure
         )
 

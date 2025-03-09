@@ -1,5 +1,6 @@
 import argparse
 import json
+
 from utils.fuzzy_matcher import get_offers_for_company
 
 # ANSI escape codes for colors
@@ -13,12 +14,12 @@ RESET = "\033[0m"  # Reset to default terminal color
 def main():
     parser = argparse.ArgumentParser(
         description="Find the best offers for one or more companies.",
-        usage='search_offer "starbucks" "mcdonalds" [--save results.json] [--bofa-html path.html] [--capone-html path.html] [--chase-html path.html]',
+        usage='search_offer "starbucks" "mcdonalds" [--save results.json] '
+        "[--bofa-html path.html] [--capone-html path.html] [--chase-html path.html]",
         epilog="""Example Output:
         ✅ Found 2 offers for 'starbucks':
         - Bank of America: 10% Cash Back (cash back)
         - Capital One: 5X miles (points)
-        
         💾 Results saved to offers.json
         """,
     )
@@ -51,7 +52,8 @@ def main():
         print(f"{BLUE}🔹 Example usage:{RESET}")
         print('   search_offer "starbucks" "mcdonalds"')
         print(
-            '   search_offer "nike" --save my_results.json --bofa-html custom_bofa.html --capone-html custom_capone.html\n'
+            '   search_offer "nike" --save my_results.json '
+            "--bofa-html custom_bofa.html --capone-html custom_capone.html\n"
         )
         return
 
