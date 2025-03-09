@@ -115,3 +115,19 @@ def test_get_offers_returns_warnings_when_no_offers(monkeypatch):
 
     assert offers == []  # ✅ No offers available
     assert warnings == ["❌ Warning: No offers found."]  # ✅ Ensure warnings are returned
+
+
+def test_get_offers_no_match_but_warnings(sample_offers, monkeypatch):
+    """✅ Ensure `get_offers_for_company` correctly returns warnings when no match is found."""
+
+    def mock_load_offers(_):
+        return sample_offers, ["❌ Warning: Some banks were unavailable."]
+
+    monkeypatch.setattr("utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
+
+    offers, warnings = get_offers_for_company("unknown_brand")  # No match should be found
+
+    assert offers == []  # ✅ No offers available
+    assert warnings == [
+        "❌ Warning: Some banks were unavailable."
+    ]  # ✅ Ensure warnings are returned
