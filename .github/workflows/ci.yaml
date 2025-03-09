@@ -51,7 +51,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Run Ruff (Lint & Format Check)
-        run: ruff check .
+        uses: astral-sh/ruff-action@v3
 
   type-check:
     needs: setup
