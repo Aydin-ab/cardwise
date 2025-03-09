@@ -24,6 +24,9 @@ jobs:
       - name: Install Dependencies
         run: poetry install --no-interaction --no-root  # Faster install, no unnecessary build
 
+      - name: Add Poetry Scripts to PATH
+        run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+        
       - name: Run Tests
         run: poetry run pytest --cov=src --cov-report=term-missing
 
