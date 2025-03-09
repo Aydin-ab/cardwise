@@ -1,16 +1,21 @@
+# pyright: reportUnknownMemberType=false
+# pyright: reportUntypedFunctionDecorator=false
+# pyright: reportMissingImports=false
 import json
 import os
+from pathlib import Path
+from typing import Dict, List
 
 import pytest
 
 from utils.fuzzy_matcher import load_fresh_offers
 
 # ✅ Base path for sample files
-SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "samples/valid")
+SAMPLES_DIR: str = os.path.join(os.path.dirname(__file__), "samples/valid")
 
 
 @pytest.fixture
-def valid_bank_files():
+def valid_bank_files() -> Dict[str, str]:
     """Fixture returning valid sample files for all banks."""
     return {
         "bank_of_america": os.path.join(SAMPLES_DIR, "sample_boa_valid.html"),
@@ -20,7 +25,7 @@ def valid_bank_files():
 
 
 @pytest.fixture
-def missing_bank_file():
+def missing_bank_file() -> Dict[str, str]:
     """Fixture simulating a missing Chase file."""
     return {
         "bank_of_america": os.path.join(SAMPLES_DIR, "sample_boa_valid.html"),
@@ -29,8 +34,10 @@ def missing_bank_file():
     }
 
 
-def test_load_fresh_offers(valid_bank_files):
+def test_load_fresh_offers(valid_bank_files: Dict[str, str]) -> None:
     """✅ Ensure offers are loaded from all banks correctly."""
+    offers: List[Dict[str, str]]
+    warnings: List[str]
     offers, warnings = load_fresh_offers(valid_bank_files)
 
     assert isinstance(offers, list)
@@ -44,8 +51,10 @@ def test_load_fresh_offers(valid_bank_files):
     assert warnings == []  # ✅ No warnings since all banks have data
 
 
-def test_load_fresh_offers_missing_file(missing_bank_file):
+def test_load_fresh_offers_missing_file(missing_bank_file: Dict[str, str]) -> None:
     """✅ Ensure results are still returned even when a bank file is missing."""
+    offers: List[Dict[str, str]]
+    warnings: List[str]
     offers, warnings = load_fresh_offers(missing_bank_file)
 
     assert len(offers) > 0  # ✅ Should still return offers from BOA & Capital One
@@ -58,31 +67,34 @@ def test_load_fresh_offers_missing_file(missing_bank_file):
     )  # ✅ Check Chase file missing
 
 
-def test_load_fresh_offers_no_data():
+def test_load_fresh_offers_no_data() -> None:
     """✅ Ensure handling when all HTML files are empty."""
-    empty_files = {
+    empty_files: Dict[str, str] = {
         "bank_of_america": "tests/samples/empty_boa.html",
         "chase": "tests/samples/empty_chase.html",
         "capital_one": "tests/samples/empty_capital_one.html",
     }
 
+    offers: List[Dict[str, str]]
+    warnings: List[str]
     offers, warnings = load_fresh_offers(empty_files)
 
     assert offers == []  # ✅ Should return an empty list
     assert len(warnings) == 3  # ✅ Should have warnings for all missing data
 
 
-def test_load_fresh_offers_saves_json(valid_bank_files, tmp_path):
+def test_load_fresh_offers_saves_json(valid_bank_files: Dict[str, str], tmp_path: Path) -> None:
     """✅ Ensure offers can be saved to a JSON file."""
-    output_file = tmp_path / "offers.json"
+    output_file: Path = tmp_path / "offers.json"
 
-    offers, warnings = load_fresh_offers(valid_bank_files, output_file=str(output_file))
+    offers: List[Dict[str, str]]
+    offers, _ = load_fresh_offers(valid_bank_files, output_file=str(output_file))
 
     # ✅ Ensure the file was created
     assert output_file.exists()
 
     # ✅ Read the saved file and validate content
     with open(output_file, "r", encoding="utf-8") as f:
-        saved_offers = json.load(f)
+        saved_offers: List[Dict[str, str]] = json.load(f)
 
     assert len(saved_offers) == len(offers)  # ✅ Should match the returned offers

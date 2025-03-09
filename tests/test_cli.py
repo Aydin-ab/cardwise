@@ -1,29 +1,35 @@
 import json
 import subprocess
+from pathlib import Path
+from typing import Dict
 
 # ✅ Define paths to test-specific HTML files
-TEST_HTML_FILES = {
+TEST_HTML_FILES: Dict[str, str] = {
     "bofa": "tests/samples/valid/sample_boa_valid.html",
     "chase": "tests/samples/valid/sample_chase_valid.html",
     "capital_one": "tests/samples/valid/sample_capital_one_valid.html",
 }
 
 
-def test_search_offer_help():
+def test_search_offer_help() -> None:
     """Test CLI help command."""
-    result = subprocess.run(["search_offer", "--help"], capture_output=True, text=True)
+    result: subprocess.CompletedProcess[str] = subprocess.run(
+        ["search_offer", "--help"], capture_output=True, text=True
+    )
     assert "Find the best offers for one or more companies." in result.stdout
 
 
-def test_search_offer_no_args():
+def test_search_offer_no_args() -> None:
     """Test CLI error when no arguments are provided."""
-    result = subprocess.run(["search_offer"], capture_output=True, text=True)
+    result: subprocess.CompletedProcess[str] = subprocess.run(
+        ["search_offer"], capture_output=True, text=True
+    )
     assert "❌ Error: You must provide at least one company name" in result.stdout
 
 
-def test_search_offer_valid():
+def test_search_offer_valid() -> None:
     """Test CLI with a valid query using test HTML files."""
-    result = subprocess.run(
+    result: subprocess.CompletedProcess[str] = subprocess.run(
         [
             "search_offer",
             "starbucks",
@@ -41,9 +47,9 @@ def test_search_offer_valid():
     assert "✅ Found 2 offers for 'starbucks':" in result.stdout  # Should find in all banks
 
 
-def test_search_offer_partial_results():
+def test_search_offer_partial_results() -> None:
     """Test CLI when one bank file is missing, ensuring it still processes the others."""
-    result = subprocess.run(
+    result: subprocess.CompletedProcess[str] = subprocess.run(
         [
             "search_offer",
             "starbucks",
@@ -51,7 +57,7 @@ def test_search_offer_partial_results():
             TEST_HTML_FILES["bofa"],
             "--chase-html",
             "missing.html",
-        ],  # Chase file does not exist
+        ],
         capture_output=True,
         text=True,
     )
@@ -61,9 +67,9 @@ def test_search_offer_partial_results():
     assert "❌ Error: The HTML file 'missing.html' for Chase does not exist." in result.stdout
 
 
-def test_search_offer_multiple_queries():
+def test_search_offer_multiple_queries() -> None:
     """Test CLI handling multiple company queries."""
-    result = subprocess.run(
+    result: subprocess.CompletedProcess[str] = subprocess.run(
         [
             "search_offer",
             "starbucks",
@@ -80,9 +86,9 @@ def test_search_offer_multiple_queries():
     assert "✅ Matches found for 'nike'" in result.stdout
 
 
-def test_search_offer_special_chars():
+def test_search_offer_special_chars() -> None:
     """Test CLI handling special characters in company names."""
-    result = subprocess.run(
+    result: subprocess.CompletedProcess[str] = subprocess.run(
         ["search_offer", "mc'donald's", "--bofa-html", TEST_HTML_FILES["bofa"]],
         capture_output=True,
         text=True,
@@ -90,9 +96,9 @@ def test_search_offer_special_chars():
     assert "✅ Matches found for 'mc'donald's'" in result.stdout  # Should normalize correctly
 
 
-def test_search_offer_case_insensitive():
+def test_search_offer_case_insensitive() -> None:
     """Test CLI case insensitivity."""
-    result = subprocess.run(
+    result: subprocess.CompletedProcess[str] = subprocess.run(
         ["search_offer", "STARBUCKS", "--bofa-html", TEST_HTML_FILES["bofa"]],
         capture_output=True,
         text=True,
@@ -100,9 +106,9 @@ def test_search_offer_case_insensitive():
     assert "✅ Matches found for 'starbucks'" in result.stdout  # Should match regardless of case
 
 
-def test_search_offer_warning_for_multiple_missing_files():
+def test_search_offer_warning_for_multiple_missing_files() -> None:
     """Test CLI handling multiple missing bank files gracefully."""
-    result = subprocess.run(
+    result: subprocess.CompletedProcess[str] = subprocess.run(
         [
             "search_offer",
             "starbucks",
@@ -125,9 +131,9 @@ def test_search_offer_warning_for_multiple_missing_files():
     )  # No valid banks left
 
 
-def test_search_offer_save_to(tmp_path):
+def test_search_offer_save_to(tmp_path: Path) -> None:
     """✅ Test CLI saving results to a JSON file."""
-    output_file = tmp_path / "saved_offers.json"
+    output_file: Path = tmp_path / "saved_offers.json"
 
     subprocess.run(
         [

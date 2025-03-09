@@ -1,5 +1,6 @@
 import argparse
 import json
+from typing import Dict, List, Tuple
 
 from utils.fuzzy_matcher import get_offers_for_company
 
@@ -11,7 +12,8 @@ BLUE = "\033[94m"
 RESET = "\033[0m"  # Reset to default terminal color
 
 
-def main():
+def parse_arguments() -> argparse.Namespace:
+    """Parses command-line arguments for the offer search script."""
     parser = argparse.ArgumentParser(
         description="Find the best offers for one or more companies.",
         usage='search_offer "starbucks" "mcdonalds" [--save results.json] '
@@ -44,34 +46,37 @@ def main():
     parser.add_argument("--capone-html", type=str, help="Custom HTML file for Capital One")
     parser.add_argument("--chase-html", type=str, help="Custom HTML file for Chase")
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    # ✅ Improved error handling when no company name is provided
-    if not args.queries:
-        print(f"\n{RED}❌ Error: You must provide at least one company name to search for.{RESET}")
-        print(f"{BLUE}🔹 Example usage:{RESET}")
-        print('   search_offer "starbucks" "mcdonalds"')
-        print(
-            '   search_offer "nike" --save my_results.json '
-            "--bofa-html custom_bofa.html --capone-html custom_capone.html\n"
-        )
-        return
 
-    # ✅ Build the HTML paths dictionary
-    html_paths = {
-        "bank_of_america": args.bofa_html,
-        "capital_one": args.capone_html,
-        "chase": args.chase_html,
+def build_html_paths(args: argparse.Namespace) -> Dict[str, str]:
+    """Constructs a dictionary of provided HTML file paths, filtering out None values."""
+    return {
+        bank: path
+        for bank, path in {
+            "bank_of_america": args.bofa_html,
+            "capital_one": args.capone_html,
+            "chase": args.chase_html,
+        }.items()
+        if path is not None
     }
 
-    html_paths = {
-        bank: path for bank, path in html_paths.items() if path is not None
-    }  # Remove None values
 
-    all_offers = []
-    all_warnings = []  # Collect missing bank warnings
+def process_company_offers(
+    queries: List[str], html_paths: Dict[str, str]
+) -> Tuple[List[Dict[str, str]], List[str]]:
+    """
+    Retrieves and processes offers for each queried company.
 
-    for query in args.queries:
+    Returns:
+        Tuple containing:
+        - List of offers found
+        - List of warnings related to missing HTML files
+    """
+    all_offers: List[Dict[str, str]] = []
+    all_warnings: List[str] = []
+
+    for query in queries:
         offers, warnings = get_offers_for_company(query, html_paths)
 
         if warnings:
@@ -85,16 +90,48 @@ def main():
         else:
             print(f"{RED}❌ No offers found for '{query}'.{RESET}")
 
-    # ✅ Show warnings about missing banks **after** all searches
-    if all_warnings:
+    return all_offers, all_warnings
+
+
+def display_warnings(warnings: List[str]) -> None:
+    """Displays warnings related to missing bank data."""
+    if warnings:
         print(f"\n{YELLOW}⚠️ Warning: Some bank data was unavailable:{RESET}")
-        for warning in set(all_warnings):  # Avoid duplicate warnings
+        for warning in set(warnings):  # Avoid duplicate warnings
             print(f"   {YELLOW}- {warning}{RESET}")
 
-    # ✅ Final status update
+
+def save_offers(offers: List[Dict[str, str]], save_path: str) -> None:
+    """Saves retrieved offers to a JSON file."""
+    with open(save_path, "w", encoding="utf-8") as f:
+        json.dump(offers, f, indent=4)
+    print(f"💾 {GREEN}Results saved to {save_path}{RESET}")
+
+
+def main() -> None:
+    """Main function to execute the offer search process."""
+    args = parse_arguments()
+
+    if not args.queries:
+        print(f"\n{RED}❌ Error: You must provide at least one company name to search for.{RESET}")
+        print(f"{BLUE}🔹 Example usage:{RESET}")
+        print('   search_offer "starbucks" "mcdonalds"')
+        print(
+            '   search_offer "nike" --save my_results.json '
+            "--bofa-html custom_bofa.html --capone-html custom_capone.html\n"
+        )
+        return
+
+    html_paths = build_html_paths(args)
+    all_offers, all_warnings = process_company_offers(args.queries, html_paths)
+
+    display_warnings(all_warnings)
+
     if not all_offers:
         print(f"{RED}❌ No offers found for any of the provided companies.{RESET}")
     elif args.save:
-        with open(args.save, "w", encoding="utf-8") as f:
-            json.dump(all_offers, f, indent=4)
-        print(f"💾 {GREEN}Results saved to {args.save}{RESET}")
+        save_offers(all_offers, args.save)
+
+
+if __name__ == "__main__":
+    main()

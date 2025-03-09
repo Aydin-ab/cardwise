@@ -35,6 +35,7 @@ dev = [
     "pytest-benchmark",
     "pytest-cov",
     "ruff",
+    "pyright",
     "pre-commit"
 ]
 
@@ -53,3 +54,9 @@ fixable = ["ALL"]  # Auto-fix everything
 
 [tool.ruff.format]
 quote-style = "double"  # Optional: use double quotes
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
+reportMissingTypeStubs = false
