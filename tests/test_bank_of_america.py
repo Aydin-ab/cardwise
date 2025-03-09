@@ -136,7 +136,7 @@ def test_parse_bank_of_america_offers_default_path(valid_boa_html, monkeypatch):
             return f.read()
 
     # ✅ Monkeypatch the read_html function to return test HTML content
-    monkeypatch.setattr("utils.html_parser.read_html", mock_read_html)
+    monkeypatch.setattr("bank_parser.bank_of_america.read_html", mock_read_html)
 
     # ✅ Run the parser without passing `html_path`, so it defaults
     offers = parse_bank_of_america_offers()
