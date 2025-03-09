@@ -1,0 +1,44 @@
+# 🚀 Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# 🚀 Virtual Environment
+venv/
+.venv/
+conda_env/
+env/
+
+# 🚀 Editor & OS-Specific Files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 🚀 Logs & Debugging
+logs/
+*.log
+
+# 🚀 Test Coverage & Pytest Cache
+.coverage
+htmlcov/
+pytest_cache/
+.tox/
+
+# 🚀 Pre-commit Hooks Cache
+.pre-commit-config.yaml
+
+# 🚀 Build & Python Package Artifacts
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# 🚀 Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# 🚀 Custom: Ignore prod data
+htmls/*.html
