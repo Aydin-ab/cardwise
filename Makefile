@@ -2,7 +2,7 @@
 
 # Default values (modifiable via arguments, e.g., `make install PYTHON_VERSION=3.11 ENV_NAME=myenv`)
 PYTHON_VERSION ?= 3.10
-ENV_NAME ?= cardwise_test
+ENV_NAME ?= cardwise
 
 # 🔥 Default: Install or update dependencies, setup pre-commit, and run tests
 all: install pre-commit-setup test
