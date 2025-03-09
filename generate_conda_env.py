@@ -17,7 +17,6 @@ def is_available_in_conda(package: str) -> bool:
 
 # Load dependencies from pyproject.toml
 with open("pyproject.toml", "r", encoding="utf-8") as f:
-    print("📖 Reading `pyproject.toml`...   ")
     pyproject: Dict[str, Any] = toml.load(f)
 
 dependencies: List[str] = pyproject["project"]["dependencies"]
