@@ -10,7 +10,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      cache-key: ${{ steps.cache-deps.outputs.cache-hit }}
+      cache-hit: ${{ steps.cache-deps.outputs.cache-hit }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,6 +35,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
+      - name: Save virtual environment
+        run: echo "VIRTUAL_ENV=$(python -c 'import sys; print(sys.prefix)')" >> $GITHUB_ENV
+
   test:
     needs: setup
     runs-on: ubuntu-latest
@@ -48,8 +51,11 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
 
+      - name: Activate virtual environment
+        run: echo "VIRTUAL_ENV=$(python -c 'import sys; print(sys.prefix)')" >> $GITHUB_ENV
+
       - name: Run Tests
-        run: pytest --cov=src --cov-report=term-missing || true  # ✅ Always upload coverage
+        run: pytest --cov=src --cov-report=term-missing || true
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
@@ -58,7 +64,7 @@ jobs:
           slug: Aydin-ab/cardwise
 
   lint:
-    needs: setup  # ✅ Runs regardless of test results
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -69,12 +75,18 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+
+      - name: Activate virtual environment
+        run: echo "VIRTUAL_ENV=$(python -c 'import sys; print(sys.prefix)')" >> $GITHUB_ENV
+
+      - name: Install Ruff (if missing)
+        run: pip install ruff  # ✅ Ensures ruff is installed
 
       - name: Run Ruff (Lint & Format Check)
         run: ruff check .
 
   type-check:
-    needs: setup  # ✅ Runs regardless of test results
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -85,6 +97,12 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+
+      - name: Activate virtual environment
+        run: echo "VIRTUAL_ENV=$(python -c 'import sys; print(sys.prefix)')" >> $GITHUB_ENV
+
+      - name: Install Pyright (if missing)
+        run: pip install pyright  # ✅ Ensures pyright is installed
 
       - name: Run Pyright
         run: pyright
