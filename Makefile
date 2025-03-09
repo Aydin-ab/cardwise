@@ -47,3 +47,25 @@ test:
 
 coverage-html:
 	pytest --cov=src --cov-report=html && open htmlcov/index.html
+
+
+# Install pre-commit hooks (if not installed already)
+pre-commit-install:
+	pre-commit install
+
+# Update pre-commit hooks when `.pre-commit-config.yaml` changes
+pre-commit-update:
+	pre-commit autoupdate
+	pre-commit install
+
+# Run all pre-commit hooks manually
+pre-commit-run:
+	pre-commit run --all-files
+
+
+# Commit and push changes with a message
+commit:
+	git add .
+	git commit -m "$(m)"
+	git push
+
