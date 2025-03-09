@@ -37,7 +37,6 @@ jobs:
 
 
   lint:
-    needs: setup-and-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -51,7 +50,6 @@ jobs:
 
 
   type-check:
-    needs: setup-and-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
