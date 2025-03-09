@@ -28,7 +28,7 @@ jobs:
         run: ruff check .
 
       - name: Run Pyright
-        uses: jakebailey/pyright-action@v2
+        run: pyright
 
       - name: Run Tests
         run: pytest --cov=src --cov-report=term-missing
