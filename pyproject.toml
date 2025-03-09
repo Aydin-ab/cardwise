@@ -34,6 +34,8 @@ dev = [
     "pytest",
     "pytest-benchmark",
     "pytest-cov",
+    "ruff",
+    "pre-commit"
 ]
 
 
