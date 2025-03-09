@@ -42,3 +42,6 @@ pip-wheel-metadata/
 
 # 🚀 Custom: Ignore prod data
 htmls/*.html
+
+# 🚀 Custom: other
+bot/

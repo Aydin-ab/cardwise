@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cardwise"
+version = "0.1.0"
+description = "A package to find the best card to use for your purchase"
+authors = [{ name = "Aydin Abiar", email = "aydinabiar@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "beautifulsoup4",
+    "requests",
+    "rapidfuzz"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[project.scripts]
+search_offer = "bank_parser.search_offers:main"
+
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-benchmark",
+    "pytest-cov",
+]
+
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100  # Matches `black`
+target-version = "py310"  # Python version
+
+[tool.ruff.lint]
+extend-select = ["E", "F", "W", "I"]  # Enable linting + import sorting
+fixable = ["ALL"]  # Auto-fix everything
+
+[tool.ruff.format]
+quote-style = "double"  # Optional: use double quotes

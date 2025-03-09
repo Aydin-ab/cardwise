@@ -1,0 +1,13 @@
+name: cardwise
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - beautifulsoup4
+  - requests
+  - rapidfuzz
+
+  - pip:
+      - pytest
