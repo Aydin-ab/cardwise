@@ -14,7 +14,7 @@ TEST_HTML_FILES: Dict[str, str] = {
 def test_search_offer_help() -> None:
     """Test CLI help command."""
     result: subprocess.CompletedProcess[str] = subprocess.run(
-        ["search_offer", "--help"], capture_output=True, text=True
+        ["poetry", "run", "search_offer", "--help"], capture_output=True, text=True
     )
     assert "Find the best offers for one or more companies." in result.stdout
 
@@ -22,7 +22,7 @@ def test_search_offer_help() -> None:
 def test_search_offer_no_args() -> None:
     """Test CLI error when no arguments are provided."""
     result: subprocess.CompletedProcess[str] = subprocess.run(
-        ["search_offer"], capture_output=True, text=True
+        ["poetry", "run", "search_offer"], capture_output=True, text=True
     )
     assert "❌ Error: You must provide at least one company name" in result.stdout
 
