@@ -135,6 +135,9 @@ def test_parse_bank_of_america_offers_default_path(valid_boa_html, monkeypatch):
         with open(valid_boa_html, "r", encoding="utf-8") as f:
             return f.read()
 
+    # ✅ Mock os.path.exists to always return True (so it doesn’t raise MissingHTMLFileError)
+    monkeypatch.setattr("os.path.exists", lambda _: True)
+
     # ✅ Monkeypatch the read_html function to return test HTML content
     monkeypatch.setattr("bank_parser.bank_of_america.read_html", mock_read_html)
 
