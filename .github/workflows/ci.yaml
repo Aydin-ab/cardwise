@@ -54,6 +54,9 @@ jobs:
       - name: Activate virtual environment
         run: echo "VIRTUAL_ENV=$(python -c 'import sys; print(sys.prefix)')" >> $GITHUB_ENV
 
+      - name: Install Pytest (if missing)
+        run: pip install pytest  # ✅ Ensures pytest is installed
+
       - name: Run Tests
         run: pytest --cov=src --cov-report=term-missing || true
 
