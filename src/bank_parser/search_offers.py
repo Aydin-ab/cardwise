@@ -131,7 +131,3 @@ def main() -> None:
         print(f"{RED}❌ No offers found for any of the provided companies.{RESET}")
     elif args.save:
         save_offers(all_offers, args.save)
-
-
-if __name__ == "__main__":
-    main()
