@@ -20,7 +20,7 @@ jobs:
           cache: "poetry"  # Caches Poetry dependencies
 
       - name: Install Poetry
-        run: pipx install poetry
+        run: pip install poetry
 
       - name: Install Dependencies
         run: poetry install --no-interaction --no-root  # Faster install, no unnecessary build
