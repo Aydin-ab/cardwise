@@ -94,7 +94,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install Pytest (if missing)
-        run: pip install pytest  # ✅ Ensure pytest is installed before running it
+        run: pip install pytest pytest-cov # ✅ Ensure pytest is installed before running it
 
       - name: Run Tests
         run: pytest --cov=src --cov-report=term-missing
