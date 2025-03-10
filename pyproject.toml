@@ -19,6 +19,7 @@ pytest-cov = "*"
 ruff = "*"
 pyright = "*"
 pre-commit = "*"
+tox = "^4.24.2"
 
 [tool.poetry.scripts]
 search_offer = "bank_parser.search_offers:main"
@@ -47,3 +48,30 @@ include = ["src", "tests"]
 pythonVersion = "3.10"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
+
+
+[tool.tox]
+env_list = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "lint", "type"] # Should fail at 3.8
+skip_missing_interpreters = false
+
+#[tool.tox.env_run_base] # Use this for a Base Test Configuration for All `3.*` environments
+
+# We run tests only in the 3.10 version to save time
+[tool.tox.env.3.10]
+description = "Run tests with pytest"
+package = "editable"  # Install local package in editable mode `pip install -e .`
+deps = ["pytest", "pytest-cov", "pytest-benchmark"]
+commands = [["pytest"]]
+
+[tool.tox.env.lint]
+description = "Run Ruff for linting"
+skip_install = true
+deps = ["ruff"]
+commands = [["ruff", "check", "."]]
+
+[tool.tox.env.type]
+description = "Run Pyright for type checking"
+skip_install = true
+deps = ["pyright"]
+commands = [["pyright"]]
+

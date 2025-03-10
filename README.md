@@ -1,7 +1,5 @@
 TODO:
-✅ pip-tools – Locks dependencies (pip-compile) to ensure reproducibility.
 ✅ tox – Automates testing across multiple Python versions.
-✅ conda-lock – If using Conda, generates lock files for deterministic environments.
 
 Docs
 ✅ README.md – Clear instructions for installation, usage, and contributing.
@@ -76,3 +74,9 @@ jobs:
 
       - name: Run Tests
         run: pytest --cov=src
+
+
+DOC
+
+For tox make sure to properly install pyenv (see the shell section) and install all pythons you wanna test
+https://github.com/pyenv/pyenv?tab=readme-ov-file#installation

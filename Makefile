@@ -1,8 +1,9 @@
-.PHONY: reset all install update test pre-commit-setup commit
+.PHONY: reset all install update test pre-commit-setup commit tox
 
 # Default values (modifiable via arguments, e.g., `make install PYTHON_VERSION=3.11 ENV_NAME=myenv`)
 PYTHON_VERSION ?= 3.10
 ENV_NAME ?= cardwise
+PYTHON_VERSIONS_TOX = 3.8 3.9 3.10 3.11 3.12 3.13
 
 # 🔥 Default: Install or update dependencies, setup pre-commit, and run tests
 all: install pre-commit-setup test
@@ -47,7 +48,6 @@ commit:
 	git add .
 	git commit -m "$(shell read -p 'Commit message: ' msg; echo $$msg)"
 	git push
-
 
 # 🔄 Reset Everything: Remove all generated files, delete Conda environment, and reinstall from scratch
 reset:
