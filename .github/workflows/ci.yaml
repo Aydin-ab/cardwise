@@ -72,4 +72,4 @@ jobs:
         run: pip install bandit  # ✅ Install Bandit separately
 
       - name: Run Bandit Security Scan
-        run: bandit -r
+        run: bandit
