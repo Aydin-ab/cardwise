@@ -71,7 +71,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run pip-audit
+      - name: 'Generate requirements.txt with poetry'
+        run: |
+          pipx install poetry
+          poetry export --without-hashes --format=requirements.txt > requirements.txt
+
+      - name: 'Run pip-audit'
         uses: pypa/gh-action-pip-audit@v1.1.0
         with:
-          inputs: .
+          inputs: requirements.txt
