@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{ include = "bank_parser", from = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.8"
 beautifulsoup4 = "^4.13.3"
 rapidfuzz = "^3.12.2"
 requests = "^2.32.3"
@@ -45,7 +45,6 @@ quote-style = "double"  # Optional: use double quotes
 
 [tool.pyright]
 include = ["src", "tests"]
-pythonVersion = "3.10"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
 
