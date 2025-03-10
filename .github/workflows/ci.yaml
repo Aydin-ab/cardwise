@@ -38,7 +38,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: Aydin-ab/cardwise
 
-  lint:
+  ruff:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -50,7 +50,7 @@ jobs:
       - name: Run Ruff (Lint & Format Check)
         run: ruff check .
 
-  type-check:
+  pyright:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -61,3 +61,15 @@ jobs:
 
       - name: Run Pyright
         run: pyright
+
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Bandit
+        run: pip install bandit  # ✅ Install Bandit separately
+
+      - name: Run Bandit Security Scan
+        run: bandit -r src/

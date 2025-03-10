@@ -20,6 +20,7 @@ ruff = "*"
 pyright = "*"
 pre-commit = "*"
 tox = "^4.24.2"
+bandit = "^1.8.3"
 
 [tool.poetry.scripts]
 search_offer = "bank_parser.search_offers:main"
@@ -75,3 +76,15 @@ skip_install = true
 deps = ["pyright"]
 commands = [["pyright"]]
 
+
+[tool.bandit]
+skips = ["B404"] # Skip bandit's B404 (import subprocess) error
+
+[tool.bandit.assert_used]
+skips = ['*_test.py', '*/test_*.py']
+
+[tool.bandit.shell_injection]
+skips = ['*_test.py', '*/test_*.py']
+
+[tool.bandit.import_subprocess]
+skips = ['*_test.py', '*/test_*.py']

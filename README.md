@@ -1,5 +1,4 @@
 TODO:
-✅ tox – Automates testing across multiple Python versions.
 
 Docs
 ✅ README.md – Clear instructions for installation, usage, and contributing.
@@ -80,3 +79,4 @@ DOC
 
 For tox make sure to properly install pyenv (see the shell section) and install all pythons you wanna test
 https://github.com/pyenv/pyenv?tab=readme-ov-file#installation
+Run tox in parallel with `tox -p`
