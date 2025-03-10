@@ -35,14 +35,21 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100  # Matches `black`
+indent-width = 4
 target-version = "py310"  # Python version
 
 [tool.ruff.lint]
-extend-select = ["E", "F", "W", "I"]  # Enable linting + import sorting
+select = ["E", "F", "W", "I", "S"]  # Enable linting + import sorting
 fixable = ["ALL"]  # Auto-fix everything
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S603", "S607"]
 
 [tool.ruff.format]
 quote-style = "double"  # Optional: use double quotes
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.pyright]
 include = ["src", "tests"]
@@ -75,16 +82,3 @@ description = "Run Pyright for type checking"
 skip_install = true
 deps = ["pyright"]
 commands = [["pyright"]]
-
-
-[tool.bandit]
-skips = ["B404"] # Skip bandit's B404 (import subprocess) error
-
-[tool.bandit.assert_used]
-skips = ['*_test.py', '*/test_*.py']
-
-[tool.bandit.shell_injection]
-skips = ['*_test.py', '*/test_*.py']
-
-[tool.bandit.import_subprocess]
-skips = ['*_test.py', '*/test_*.py']
