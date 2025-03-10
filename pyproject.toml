@@ -24,6 +24,7 @@ pyright = "*"
 pre-commit = "*"
 tox = "^4.24.2"
 pip-audit = "^2.8.0"
+trufflehog = "^2.2.1"
 
 [tool.poetry.scripts]
 search_offer = "bank_parser.search_offers:main"

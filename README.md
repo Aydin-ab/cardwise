@@ -10,14 +10,7 @@ Docs
 
 
 Security
-✅ pip-audit – Checks for known vulnerabilities in dependencies.
 ✅ Secrets Scanning – Use trufflehog or GitHub's secret scanning to detect leaked credentials.
-in pre commit config:
-- repo: https://github.com/PyCQA/bandit
-  rev: "latest"
-  hooks:
-    - id: bandit
-      args: ["-r", "src"]
 
 🚀 5. Performance Profiling
 ✅ cProfile & py-spy – Analyze bottlenecks in execution time.
