@@ -10,7 +10,6 @@ Docs
 
 
 Security
-✅ bandit – Static security analysis to catch vulnerabilities in Python code.
 ✅ pip-audit – Checks for known vulnerabilities in dependencies.
 ✅ Secrets Scanning – Use trufflehog or GitHub's secret scanning to detect leaked credentials.
 in pre commit config:
