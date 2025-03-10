@@ -71,8 +71,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install pip-audit
-        run: pip install pip-audit
-
       - name: Run pip-audit
-        run: pip-audit
+        uses: pypa/gh-action-pip-audit@v1.1.0
