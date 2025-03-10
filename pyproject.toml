@@ -50,13 +50,14 @@ reportMissingTypeStubs = false
 
 
 [tool.tox]
-env_list = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "lint", "type"] # Should fail at 3.8
+env_list = ["py38", "py39", "py310", "py311", "py312", "py313", "lint", "type"] # Should fail at 3.8
 skip_missing_interpreters = false
 
-#[tool.tox.env_run_base] # Use this for a Base Test Configuration for All `3.*` environments
+[tool.tox.env_run_base] # Use this for a Base Test Configuration for All `3.*` environments
+package = "editable" 
 
 # We run tests only in the 3.10 version to save time
-[tool.tox.env.3.10]
+[tool.tox.env.py310]
 description = "Run tests with pytest"
 package = "editable"  # Install local package in editable mode `pip install -e .`
 deps = ["pytest", "pytest-cov", "pytest-benchmark"]
