@@ -49,6 +49,7 @@ commit:
 	git commit -m "$(shell read -p 'Commit message: ' msg; echo $$msg)"
 	git push
 
+
 # 🔄 Reset Everything: Remove all generated files, delete Conda environment, and reinstall from scratch
 reset:
 	@echo "🔥 Resetting everything..."
