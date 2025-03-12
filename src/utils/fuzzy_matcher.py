@@ -118,9 +118,7 @@ def get_offers_for_company(
     best_matches: List[str] = find_best_matches(user_input.lower().strip(), company_names)
 
     if best_matches:
-        matched_offers = [
-            offer for offer in offers if offer["company"].lower().strip() in best_matches
-        ]
+        matched_offers = [offer for offer in offers if offer["company"].lower().strip() in best_matches]
         logger.info(f"✅ Found {len(matched_offers)} offers for '{user_input}'")
         return matched_offers, warnings
 

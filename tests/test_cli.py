@@ -121,14 +121,9 @@ def test_search_offer_warning_for_multiple_missing_files() -> None:
         text=True,
     )
     assert "⚠️ Warning: Some bank data was unavailable" in result.stdout
-    assert (
-        "❌ Error: The HTML file 'invalid.html' for Bank of America does not exist."
-        in result.stdout
-    )
+    assert "❌ Error: The HTML file 'invalid.html' for Bank of America does not exist." in result.stdout
     assert "❌ Error: The HTML file 'missing.html' for Chase does not exist." in result.stdout
-    assert (
-        "❌ No offers found for any of the provided companies." in result.stdout
-    )  # No valid banks left
+    assert "❌ No offers found for any of the provided companies." in result.stdout  # No valid banks left
 
 
 def test_search_offer_save_to(tmp_path: Path) -> None:

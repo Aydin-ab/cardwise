@@ -50,9 +50,7 @@ def parse_bank_of_america_offers(
 
         if not isinstance(span_tag, Tag) or not span_tag.get_text(strip=True):
             logger.error(f"❌ Offer text missing for company '{img_tag['alt']}': no text found")
-            raise InvalidOfferDataError(
-                "Bank of America", f"Offer text not found for company '{img_tag['alt']}'"
-            )
+            raise InvalidOfferDataError("Bank of America", f"Offer text not found for company '{img_tag['alt']}'")
 
         # ✅ Extract and clean text safely
         company_name: str = str(img_tag["alt"]).replace(" Logo", "").strip()

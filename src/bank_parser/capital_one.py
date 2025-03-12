@@ -12,9 +12,7 @@ from bank_parser.logger import logger  # ✅ Import centralized logger
 from utils.html_parser import read_html
 
 
-def parse_capital_one_offers(
-    html_path: Optional[str] = None, save_to: Optional[str] = None
-) -> List[Dict[str, str]]:
+def parse_capital_one_offers(html_path: Optional[str] = None, save_to: Optional[str] = None) -> List[Dict[str, str]]:
     """Parse Capital One offers from an HTML file."""
     if html_path is None:
         html_path = "htmls/capital_one_offers.html"
@@ -50,9 +48,7 @@ def parse_capital_one_offers(
         # ✅ Ensure img_tag is a Tag and has `src`
         if not isinstance(img_tag, Tag) or not img_tag.has_attr("src"):
             logger.error("❌ Can't find offer: Image tag not found or missing 'src' attribute")
-            raise InvalidOfferDataError(
-                "Capital One", "Image tag not found or missing 'src' attribute"
-            )
+            raise InvalidOfferDataError("Capital One", "Image tag not found or missing 'src' attribute")
 
         # 🔥 **Fix: Explicitly cast to `str`**
         src_attr = img_tag["src"]
@@ -72,17 +68,13 @@ def parse_capital_one_offers(
         offer_divs: List[Tag] = [div for div in tile.find_all("div") if isinstance(div, Tag)]
         if len(offer_divs) < 2:
             logger.error(f"❌ Offer text missing for company '{company_name}': no text found")
-            raise InvalidOfferDataError(
-                "Capital One", f"Offer text not found for company '{company_name}'"
-            )
+            raise InvalidOfferDataError("Capital One", f"Offer text not found for company '{company_name}'")
 
         offer_text: str = offer_divs[1].get_text(strip=True)
 
         if not offer_text:
             logger.error(f"❌ Offer text is empty for '{company_name}'")
-            raise InvalidOfferDataError(
-                "Capital One", f"Offer text is empty for company '{company_name}'"
-            )
+            raise InvalidOfferDataError("Capital One", f"Offer text is empty for company '{company_name}'")
 
         # ✅ Normalize extracted text
         company_name = company_name.strip()

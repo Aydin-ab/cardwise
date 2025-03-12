@@ -137,9 +137,7 @@ def test_parse_bank_of_america_offers_empty_file() -> None:
     assert "No valid offers found" in str(excinfo.value)
 
 
-def test_parse_bank_of_america_offers_default_path(
-    valid_boa_html: str, monkeypatch: MonkeyPatch
-) -> None:
+def test_parse_bank_of_america_offers_default_path(valid_boa_html: str, monkeypatch: MonkeyPatch) -> None:
     """✅ Test parsing using the default HTML path (mocked)."""
 
     def mock_read_html(_: str) -> str:

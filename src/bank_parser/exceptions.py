@@ -9,8 +9,7 @@ class MissingHTMLFileError(BankParserError):
 
     def __init__(self, bank_name: str, file_path: str) -> None:
         error_message: str = (
-            f"❌ Error: The HTML file '{file_path}' for {bank_name} does not exist. "
-            "Please provide a valid file."
+            f"❌ Error: The HTML file '{file_path}' for {bank_name} does not exist. Please provide a valid file."
         )
         super().__init__(error_message)
 

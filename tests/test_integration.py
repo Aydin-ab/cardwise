@@ -42,9 +42,7 @@ def test_load_fresh_offers(valid_bank_files: Dict[str, str]) -> None:
 
     assert isinstance(offers, list)
     assert len(offers) == 6  # Expecting 6 offers based on provided samples
-    assert any(
-        offer["company"] == "Starbucks" and offer["bank"] == "Bank of America" for offer in offers
-    )
+    assert any(offer["company"] == "Starbucks" and offer["bank"] == "Bank of America" for offer in offers)
     assert any(offer["company"] == "McDonald's" and offer["bank"] == "Chase" for offer in offers)
     assert any(offer["company"] == "Nike" and offer["bank"] == "Chase" for offer in offers)
     assert any(offer["company"] == "adidas" and offer["bank"] == "Capital One" for offer in offers)
@@ -62,9 +60,7 @@ def test_load_fresh_offers_missing_file(missing_bank_file: Dict[str, str]) -> No
     assert any(offer["company"] == "adidas" for offer in offers)
 
     # ✅ Ensure we get a warning about the missing Chase file
-    assert any(
-        "The HTML file" in warning and "Chase" in warning for warning in warnings
-    )  # ✅ Check Chase file missing
+    assert any("The HTML file" in warning and "Chase" in warning for warning in warnings)  # ✅ Check Chase file missing
 
 
 def test_load_fresh_offers_no_data() -> None:

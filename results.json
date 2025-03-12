@@ -1,0 +1,20 @@
+[
+    {
+        "company": "Shake Shack",
+        "offer": "10%",
+        "bank": "Bank of America",
+        "reward_type": "cash back"
+    },
+    {
+        "company": "Shake Shack",
+        "offer": "10% cash back",
+        "bank": "Chase",
+        "reward_type": "cash back"
+    },
+    {
+        "company": "sephora",
+        "offer": "6X miles",
+        "bank": "Capital One",
+        "reward_type": "points"
+    }
+]

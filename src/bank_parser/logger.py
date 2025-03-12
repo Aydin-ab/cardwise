@@ -20,7 +20,6 @@ SMTP_FROM = os.getenv("SMTP_FROM", "").strip()
 # Get current date for timestamped error logs
 log_date = datetime.now().strftime("%Y-%m-%d")
 error_log_filename = f"errors_{log_date}.log"
-verbose_log_filename = "verbose_cardwise.log"  # Separate verbose log
 
 # ANSI Colors for Terminal Logging
 RESET = "\033[0m"
@@ -44,32 +43,33 @@ class ColoredFormatter(logging.Formatter):
 # Log format
 log_format = "%(asctime)s [%(levelname)s] %(message)s"
 
-# 📁 Main log file (rotates at 5MB, keeps last 3 logs)
-file_handler = RotatingFileHandler("cardwise.log", maxBytes=5_000_000, backupCount=3)
-file_handler.setFormatter(logging.Formatter(log_format))
-file_handler.setLevel(logging.INFO)
-
-# 📁 Verbose log file (separate logging when `-v` is used)
-verbose_file_handler = RotatingFileHandler(verbose_log_filename, maxBytes=5_000_000, backupCount=2)
-verbose_file_handler.setFormatter(logging.Formatter(log_format))
-verbose_file_handler.setLevel(logging.DEBUG)  # Always logs everything
-
-# 📁 Timestamped error log file (logs only `ERROR` and `CRITICAL`)
-error_handler = RotatingFileHandler(error_log_filename, maxBytes=2_000_000, backupCount=2)
-error_handler.setFormatter(logging.Formatter(log_format))
-error_handler.setLevel(logging.ERROR)
-
 # 🎨 Console handler (Uses colored formatter)
 console_handler = logging.StreamHandler()
-console_handler.setFormatter(ColoredFormatter(log_format))  # ✅ Apply colors only to console logs
+console_handler.setFormatter(ColoredFormatter(log_format))
 console_handler.setLevel(logging.WARNING)  # Default: Only show warnings/errors
 
 # 🔧 Create logger
 logger = logging.getLogger("cardwise")
-logger.setLevel(logging.WARNING)  # Default: Disabled unless `-v` is used
-logger.addHandler(file_handler)
-logger.addHandler(error_handler)
+logger.setLevel(logging.WARNING)  # Default: Disabled unless `--log-level` is set
 logger.addHandler(console_handler)
+
+
+# Function to enable file logging **only if `--log-level` is used**
+def enable_file_logging(log_level: str):
+    """
+    Enables file logging when `--log-level` is explicitly provided.
+    """
+    file_handler = RotatingFileHandler("cardwise.log", maxBytes=5_000_000, backupCount=3, delay=True)
+    file_handler.setFormatter(logging.Formatter(log_format))
+    file_handler.setLevel(log_level)
+    logger.addHandler(file_handler)
+
+    error_handler = RotatingFileHandler(error_log_filename, maxBytes=2_000_000, backupCount=2, delay=True)
+    error_handler.setFormatter(logging.Formatter(log_format))
+    error_handler.setLevel(logging.ERROR)
+    logger.addHandler(error_handler)
+
+    logger.info("📁 File logging enabled")
 
 
 # 📧 Email Error Notifications (Only if SMTP credentials are provided)
@@ -106,15 +106,17 @@ def set_log_level(verbosity: int = 0, manual_level: Optional[str] = None):
     **Usage Options:**
     - `-v`: Logs INFO messages.
     - `-vv`: Logs DEBUG messages.
-    - `-vvv`: Logs DEBUG + writes to `verbose_cardwise.log`.
     - `--log-level <level>`: Manually set level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`).
+
+    ✅ Log files will **only** be created if `--log-level` is used.
     """
     if manual_level:
         level = manual_level.upper()
-        all_levels = ["CRITICAL", "FATAL", "ERROR", "WARN", "WARNING", "INFO", "DEBUG", "NOTSET"]
+        all_levels = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
         if level in all_levels:
             logger.setLevel(level)
             console_handler.setLevel(level)
+            enable_file_logging(level)  # ✅ Enable file logging **only if `--log-level` is set**
             logger.info(f"🔍 Manual log level set to {level}")
             return
         else:
@@ -130,8 +132,5 @@ def set_log_level(verbosity: int = 0, manual_level: Optional[str] = None):
     elif verbosity >= 2:
         logger.setLevel(logging.DEBUG)  # `-vv` and above
         console_handler.setLevel(logging.DEBUG)
-
-        if verbosity >= 3:
-            logger.addHandler(verbose_file_handler)  # `-vvv` adds file logging
 
     logger.info(f"🔍 Logging level set to {logging.getLevelName(logger.level)}")

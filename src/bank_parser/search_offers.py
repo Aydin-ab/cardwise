@@ -1,5 +1,6 @@
 import argparse
 import json
+from collections import defaultdict
 from typing import Dict, List, Tuple
 
 from bank_parser.logger import logger, set_log_level  # ✅ Import centralized logger
@@ -28,9 +29,9 @@ def parse_arguments() -> argparse.Namespace:
         "-s",
         "--save",
         nargs="?",
-        const="offers.json",
+        const="results.json",
         type=str,
-        help="Save results to a JSON file (default: offers.json)",
+        help="Save results to a JSON file (default: results.json)",
     )
 
     parser.add_argument(
@@ -53,9 +54,7 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     # 🔥 Add verbosity flag (-v, -vv, -vvv)
-    parser.add_argument(
-        "-v", "--verbose", action="count", default=0, help="Increase verbosity (-v, -vv, -vvv)"
-    )
+    parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity (-v, -vv, -vvv)")
 
     # 🔥 Add explicit log level flag (Overrides -v if used)
     parser.add_argument(
@@ -87,9 +86,7 @@ def build_html_paths(args: argparse.Namespace) -> Dict[str, str]:
     return html_paths
 
 
-def process_company_offers(
-    queries: List[str], html_paths: Dict[str, str]
-) -> Tuple[List[Dict[str, str]], List[str]]:
+def process_company_offers(queries: List[str], html_paths: Dict[str, str]) -> Tuple[List[Dict[str, str]], List[str]]:
     """Retrieves and processes offers for each queried company."""
     all_offers: List[Dict[str, str]] = []
     all_warnings: List[str] = []
@@ -105,8 +102,6 @@ def process_company_offers(
         if offers:
             all_offers.extend(offers)
             logger.info(f"✅ Found {len(offers)} offers for '{query}'")
-            for offer in offers:
-                print(f"- {offer['bank']}: {offer['offer']} ({offer['reward_type']})")
         else:
             logger.info(f"❌ No offers found for '{query}'")
 
@@ -155,7 +150,21 @@ def main() -> None:
     if not all_offers:
         logger.info("❌ No offers found for any company.")
         print(f"{RED}❌ No offers found for any of the provided companies.{RESET}")
-    elif args.save:
+        return
+
+    # ✅ Group offers by company
+    offers_by_company: Dict[str, List[Dict[str, str]]] = defaultdict(list)
+    for offer in all_offers:
+        offers_by_company[offer["company"]].append(offer)
+
+    # ✅ Print grouped offers
+    print("\n🔹 Here are the best offers found:\n")
+    for company, offers in offers_by_company.items():
+        print(f"{BLUE}📌 {company}{RESET}")  # Company header
+        for offer in offers:
+            print(f"  {GREEN}- {offer['bank']}: {offer['offer']} ({offer['reward_type']}){RESET}")
+
+    if args.save:
         save_offers(all_offers, args.save)
 
 

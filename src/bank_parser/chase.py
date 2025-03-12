@@ -11,9 +11,7 @@ from bank_parser.logger import logger  # ✅ Import centralized logger
 from utils.html_parser import read_html
 
 
-def parse_chase_offers(
-    html_path: Optional[str] = None, save_to: Optional[str] = None
-) -> List[Dict[str, str]]:
+def parse_chase_offers(html_path: Optional[str] = None, save_to: Optional[str] = None) -> List[Dict[str, str]]:
     """Parse Chase offers from an HTML file."""
     if html_path is None:
         html_path = "htmls/chase_offers.html"
@@ -31,9 +29,7 @@ def parse_chase_offers(
     results: List[Dict[str, str]] = []
 
     # ✅ Convert to list and filter only `Tag` elements
-    divs: List[Tag] = [
-        tag for tag in soup.find_all("div", class_="r9jbije r9jbijl") if isinstance(tag, Tag)
-    ]
+    divs: List[Tag] = [tag for tag in soup.find_all("div", class_="r9jbije r9jbijl") if isinstance(tag, Tag)]
 
     if not divs:
         logger.error(f"❌ No offers found in {html_path}: no valid divs found")

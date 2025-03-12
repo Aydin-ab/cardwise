@@ -140,9 +140,7 @@ def test_parse_capital_one_offers_missing_image(html_with_missing_image: str) ->
     assert "Image tag not found or missing 'src' attribute" in str(excinfo.value)
 
 
-def test_parse_capital_one_offers_saves_to_json(
-    valid_capital_one_html: str, tmp_path: Path
-) -> None:
+def test_parse_capital_one_offers_saves_to_json(valid_capital_one_html: str, tmp_path: Path) -> None:
     """✅ Test saving parsed results to a JSON file."""
     output_file = tmp_path / "capital_one_offers.json"
 
