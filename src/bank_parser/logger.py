@@ -19,6 +19,7 @@ SMTP_FROM = os.getenv("SMTP_FROM", "").strip()
 # Get current date for timestamped error logs
 log_date = datetime.now().strftime("%Y-%m-%d")
 error_log_filename = f"errors_{log_date}.log"
+verbose_log_filename = "verbose_cardwise.log"  # Separate verbose log
 
 # ANSI Colors for Terminal Logging
 RESET = "\033[0m"
@@ -47,6 +48,11 @@ file_handler = RotatingFileHandler("cardwise.log", maxBytes=5_000_000, backupCou
 file_handler.setFormatter(logging.Formatter(log_format))
 file_handler.setLevel(logging.INFO)
 
+# 📁 Verbose log file (separate logging when `-v` is used)
+verbose_file_handler = RotatingFileHandler(verbose_log_filename, maxBytes=5_000_000, backupCount=2)
+verbose_file_handler.setFormatter(logging.Formatter(log_format))
+verbose_file_handler.setLevel(logging.DEBUG)  # Always logs everything
+
 # 📁 Timestamped error log file (logs only `ERROR` and `CRITICAL`)
 error_handler = RotatingFileHandler(error_log_filename, maxBytes=2_000_000, backupCount=2)
 error_handler.setFormatter(logging.Formatter(log_format))
@@ -55,13 +61,15 @@ error_handler.setLevel(logging.ERROR)
 # 🎨 Console handler (Uses colored formatter)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(ColoredFormatter(log_format))  # ✅ Apply colors only to console logs
+console_handler.setLevel(logging.WARNING)  # Default: Only show warnings/errors
 
 # 🔧 Create logger
 logger = logging.getLogger("cardwise")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARNING)  # Default: Disabled unless `-v` is used
 logger.addHandler(file_handler)
 logger.addHandler(error_handler)
 logger.addHandler(console_handler)
+
 
 # 📧 Email Error Notifications (Only if SMTP credentials are provided)
 if all([SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_TO, SMTP_FROM]):
@@ -87,4 +95,30 @@ else:
 # Suppress logs from external libraries
 logging.getLogger("requests").setLevel(logging.WARNING)  # Suppress detailed logs from requests
 logging.getLogger("urllib3").setLevel(logging.WARNING)  # Same for urllib3
-# logging.getLogger("some_library").setLevel(logging.DEBUG)# Keep debugging info for specific librar
+
+
+### **🔹 Function to Control Log Level via CLI Arguments**
+def set_log_level(verbosity: int):
+    """
+    Adjusts logging based on the number of `-v` flags.
+
+    Verbosity Levels:
+    - Default (no `-v`): Warnings and Errors only.
+    - `-v`: INFO level
+    - `-vv`: DEBUG level
+    - `-vvv`: DEBUG + logs to `verbose_cardwise.log`
+    """
+    if verbosity == 0:
+        logger.setLevel(logging.WARNING)  # Default (Only warnings and errors)
+        console_handler.setLevel(logging.WARNING)
+    elif verbosity == 1:
+        logger.setLevel(logging.INFO)  # `-v`
+        console_handler.setLevel(logging.INFO)
+    elif verbosity >= 2:
+        logger.setLevel(logging.DEBUG)  # `-vv` and above
+        console_handler.setLevel(logging.DEBUG)
+
+        if verbosity >= 3:
+            logger.addHandler(verbose_file_handler)  # `-vvv` adds file logging
+
+    logger.info(f"🔍 Logging level set to {logging.getLevelName(logger.level)}")

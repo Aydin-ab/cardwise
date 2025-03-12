@@ -1,9 +1,8 @@
 import argparse
 import json
-import logging
 from typing import Dict, List, Tuple
 
-from bank_parser.logger import logger  # ✅ Import centralized logger
+from bank_parser.logger import logger, set_log_level  # ✅ Import centralized logger
 from utils.fuzzy_matcher import get_offers_for_company
 
 # ANSI escape codes for colors
@@ -19,8 +18,8 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Find the best offers for one or more companies.",
         usage='search_offer "starbucks" "mcdonalds" [--save results.json] '
-        "[--bofa-html path.html] [--capone-html path.html] [--chase-html path.html] "
-        "[--log-level INFO] [-v]",
+        "[--bofa-html path.html] [--capone-html path.html] [--chase-html path.html]"
+        " [-v | -vv | -vvv]",
     )
 
     parser.add_argument("queries", nargs="*", type=str, help="Company names to search for")
@@ -53,33 +52,17 @@ def parse_arguments() -> argparse.Namespace:
         help="Custom HTML file for Chase",
     )
 
-    # 🔥 Logging Control
+    # 🔥 Add verbosity flag (-v, -vv, -vvv)
     parser.add_argument(
-        "--log-level",
-        type=str,
-        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        default="CRITICAL",  # 🚫 Default: No logs
-        help="Set the logging level (default: CRITICAL)",
-    )
-
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Enable verbose logging (equivalent to --log-level DEBUG)",
+        "-v", "--verbose", action="count", default=0, help="Increase verbosity (-v, -vv, -vvv)"
     )
 
     args = parser.parse_args()
 
-    # ✅ Adjust logging level based on `--verbose` or `--log-level`
-    if args.verbose:
-        log_level = "DEBUG"
-    else:
-        log_level = args.log_level
+    # 🔥 Apply verbosity setting
+    set_log_level(args.verbose)
 
-    logging.getLogger("cardwise").setLevel(getattr(logging, log_level))
-    logger.info(f"Parsed arguments: {vars(args)}")  # Log parsed arguments only if enabled
-
+    logger.info(f"Parsed arguments: {vars(args)}")  # Log parsed arguments
     return args
 
 
