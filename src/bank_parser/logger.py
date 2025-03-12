@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 from logging.handlers import RotatingFileHandler, SMTPHandler
+from typing import Optional
 
 from dotenv import load_dotenv
 
@@ -98,16 +99,28 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)  # Same for urllib3
 
 
 ### **🔹 Function to Control Log Level via CLI Arguments**
-def set_log_level(verbosity: int):
+def set_log_level(verbosity: int = 0, manual_level: Optional[str] = None):
     """
-    Adjusts logging based on the number of `-v` flags.
+    Adjusts logging based on verbosity (`-v`) or manual log level (`--log-level`).
 
-    Verbosity Levels:
-    - Default (no `-v`): Warnings and Errors only.
-    - `-v`: INFO level
-    - `-vv`: DEBUG level
-    - `-vvv`: DEBUG + logs to `verbose_cardwise.log`
+    **Usage Options:**
+    - `-v`: Logs INFO messages.
+    - `-vv`: Logs DEBUG messages.
+    - `-vvv`: Logs DEBUG + writes to `verbose_cardwise.log`.
+    - `--log-level <level>`: Manually set level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`).
     """
+    if manual_level:
+        level = manual_level.upper()
+        all_levels = ["CRITICAL", "FATAL", "ERROR", "WARN", "WARNING", "INFO", "DEBUG", "NOTSET"]
+        if level in all_levels:
+            logger.setLevel(level)
+            console_handler.setLevel(level)
+            logger.info(f"🔍 Manual log level set to {level}")
+            return
+        else:
+            logger.error(f"❌ Invalid log level: {manual_level} (Use one of {all_levels})")
+            return
+
     if verbosity == 0:
         logger.setLevel(logging.WARNING)  # Default (Only warnings and errors)
         console_handler.setLevel(logging.WARNING)

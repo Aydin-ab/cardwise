@@ -19,7 +19,7 @@ def parse_arguments() -> argparse.Namespace:
         description="Find the best offers for one or more companies.",
         usage='search_offer "starbucks" "mcdonalds" [--save results.json] '
         "[--bofa-html path.html] [--capone-html path.html] [--chase-html path.html]"
-        " [-v | -vv | -vvv]",
+        " [-v | -vv | -vvv] [--log-level INFO]",
     )
 
     parser.add_argument("queries", nargs="*", type=str, help="Company names to search for")
@@ -57,10 +57,18 @@ def parse_arguments() -> argparse.Namespace:
         "-v", "--verbose", action="count", default=0, help="Increase verbosity (-v, -vv, -vvv)"
     )
 
+    # 🔥 Add explicit log level flag (Overrides -v if used)
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Manually set log level",
+    )
+
     args = parser.parse_args()
 
-    # 🔥 Apply verbosity setting
-    set_log_level(args.verbose)
+    # 🔥 Apply log level (Priority: `--log-level` > `-v`)
+    set_log_level(args.verbose, args.log_level)
 
     logger.info(f"Parsed arguments: {vars(args)}")  # Log parsed arguments
     return args
