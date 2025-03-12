@@ -1,4 +1,7 @@
 TODO:
+DONE ✅ pip-tools – Locks dependencies (pip-compile) to ensure reproducibility.
+DONE ✅ tox – Automates testing across multiple Python versions.
+DONE ✅ conda-lock – If using Conda, generates lock files for deterministic environments.
 
 Docs
 ✅ README.md – Clear instructions for installation, usage, and contributing.
@@ -10,7 +13,10 @@ Docs
 
 
 Security
-✅ Secrets Scanning – Use trufflehog or GitHub's secret scanning to detect leaked credentials.
+DONE ✅ bandit – Static security analysis to catch vulnerabilities in Python code.
+DONE ✅ pip-audit – Checks for known vulnerabilities in dependencies.
+DONE ✅ Secrets Scanning – Use gitleaks or trufflehog or GitHub's secret scanning to detect leaked credentials.
+
 
 🚀 5. Performance Profiling
 ✅ cProfile & py-spy – Analyze bottlenecks in execution time.
@@ -19,15 +25,9 @@ Security
 📌 Helps identify slow code and optimize critical paths.
 
 📊 6. Logging & Error Handling
-✅ Structured Logging – Use logging instead of print().
-✅ Sentry – Capture errors in production.
-Example :
-import logging
+DONE ✅ Structured Logging – Use logging instead of print().
+DONE ✅ Sentry – Capture errors in production.
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
-
-logger.info("App started successfully")
 
 
 📡 7. Deployment & Packaging
@@ -50,21 +50,6 @@ CMD ["python", "-m", "bank_parser.search_offers"]
 ✅ GitHub Action for Releases – Auto-generate release notes.
 
 Example matrix
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Run Tests
-        run: pytest --cov=src
 
 
 DOC

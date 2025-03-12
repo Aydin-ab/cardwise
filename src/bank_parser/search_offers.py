@@ -1,7 +1,9 @@
 import argparse
 import json
+import logging
 from typing import Dict, List, Tuple
 
+from bank_parser.logger import logger  # ✅ Import centralized logger
 from utils.fuzzy_matcher import get_offers_for_company
 
 # ANSI escape codes for colors
@@ -17,21 +19,12 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Find the best offers for one or more companies.",
         usage='search_offer "starbucks" "mcdonalds" [--save results.json] '
-        "[--bofa-html path.html] [--capone-html path.html] [--chase-html path.html]",
-        epilog="""Example Output:
-        ✅ Found 2 offers for 'starbucks':
-        - Bank of America: 10% Cash Back (cash back)
-        - Capital One: 5X miles (points)
-        💾 Results saved to offers.json
-        """,
+        "[--bofa-html path.html] [--capone-html path.html] [--chase-html path.html] "
+        "[--log-level INFO] [-v]",
     )
 
-    # Accept one or more company names
-    parser.add_argument(
-        "queries", nargs="*", type=str, help="Company names (e.g., Starbucks McDonald's)"
-    )
+    parser.add_argument("queries", nargs="*", type=str, help="Company names to search for")
 
-    # Optional flag to save results
     parser.add_argument(
         "-s",
         "--save",
@@ -41,54 +34,90 @@ def parse_arguments() -> argparse.Namespace:
         help="Save results to a JSON file (default: offers.json)",
     )
 
-    # Separate optional HTML paths for each bank
-    parser.add_argument("--bofa-html", type=str, help="Custom HTML file for Bank of America")
-    parser.add_argument("--capone-html", type=str, help="Custom HTML file for Capital One")
-    parser.add_argument("--chase-html", type=str, help="Custom HTML file for Chase")
+    parser.add_argument(
+        "--bofa-html",
+        type=str,
+        default="htmls/bank_of_america_offers.html",
+        help="Custom HTML file for Bank of America",
+    )
+    parser.add_argument(
+        "--capone-html",
+        type=str,
+        default="htmls/capital_one_offers.html",
+        help="Custom HTML file for Capital One",
+    )
+    parser.add_argument(
+        "--chase-html",
+        type=str,
+        default="htmls/chase_offers.html",
+        help="Custom HTML file for Chase",
+    )
 
-    return parser.parse_args()
+    # 🔥 Logging Control
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="CRITICAL",  # 🚫 Default: No logs
+        help="Set the logging level (default: CRITICAL)",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose logging (equivalent to --log-level DEBUG)",
+    )
+
+    args = parser.parse_args()
+
+    # ✅ Adjust logging level based on `--verbose` or `--log-level`
+    if args.verbose:
+        log_level = "DEBUG"
+    else:
+        log_level = args.log_level
+
+    logging.getLogger("cardwise").setLevel(getattr(logging, log_level))
+    logger.info(f"Parsed arguments: {vars(args)}")  # Log parsed arguments only if enabled
+
+    return args
 
 
 def build_html_paths(args: argparse.Namespace) -> Dict[str, str]:
     """Constructs a dictionary of provided HTML file paths, filtering out None values."""
-    return {
-        bank: path
-        for bank, path in {
-            "bank_of_america": args.bofa_html,
-            "capital_one": args.capone_html,
-            "chase": args.chase_html,
-        }.items()
-        if path is not None
+    paths = {
+        "bank_of_america": args.bofa_html,
+        "capital_one": args.capone_html,
+        "chase": args.chase_html,
     }
+    html_paths = {bank: path for bank, path in paths.items() if path is not None}
+
+    logger.info(f"Using HTML files: {html_paths}")
+    return html_paths
 
 
 def process_company_offers(
     queries: List[str], html_paths: Dict[str, str]
 ) -> Tuple[List[Dict[str, str]], List[str]]:
-    """
-    Retrieves and processes offers for each queried company.
-
-    Returns:
-        Tuple containing:
-        - List of offers found
-        - List of warnings related to missing HTML files
-    """
+    """Retrieves and processes offers for each queried company."""
     all_offers: List[Dict[str, str]] = []
     all_warnings: List[str] = []
 
     for query in queries:
+        logger.info(f"🔍 Searching offers for '{query}'...")
         offers, warnings = get_offers_for_company(query, html_paths)
 
         if warnings:
             all_warnings.extend(warnings)
+            logger.warning(f"⚠️ Warnings encountered for {query}: {warnings}")
 
         if offers:
             all_offers.extend(offers)
-            print(f"{GREEN}✅ Found {len(offers)} offers for '{query}':{RESET}")
+            logger.info(f"✅ Found {len(offers)} offers for '{query}'")
             for offer in offers:
                 print(f"- {offer['bank']}: {offer['offer']} ({offer['reward_type']})")
         else:
-            print(f"{RED}❌ No offers found for '{query}'.{RESET}")
+            logger.info(f"❌ No offers found for '{query}'")
 
     return all_offers, all_warnings
 
@@ -96,16 +125,19 @@ def process_company_offers(
 def display_warnings(warnings: List[str]) -> None:
     """Displays warnings related to missing bank data."""
     if warnings:
-        print(f"\n{YELLOW}⚠️ Warning: Some bank data was unavailable:{RESET}")
-        for warning in set(warnings):  # Avoid duplicate warnings
-            print(f"   {YELLOW}- {warning}{RESET}")
+        logger.warning(f"⚠️ Missing bank data: {warnings}")
+        for warning in set(warnings):
+            print(f"{YELLOW}- {warning}{RESET}")  # Keep this for user readability
 
 
 def save_offers(offers: List[Dict[str, str]], save_path: str) -> None:
     """Saves retrieved offers to a JSON file."""
-    with open(save_path, "w", encoding="utf-8") as f:
-        json.dump(offers, f, indent=4)
-    print(f"💾 {GREEN}Results saved to {save_path}{RESET}")
+    try:
+        with open(save_path, "w", encoding="utf-8") as f:
+            json.dump(offers, f, indent=4)
+        logger.info(f"💾 Results saved to {save_path}")
+    except Exception as e:
+        logger.error(f"❌ Failed to save offers: {e}")
 
 
 def main() -> None:
@@ -113,7 +145,9 @@ def main() -> None:
     args = parse_arguments()
 
     if not args.queries:
-        print(f"\n{RED}❌ Error: You must provide at least one company name to search for.{RESET}")
+        error_msg = "❌ Error: You must provide at least one company name to search for."
+        logger.error(error_msg)
+        print(f"\n{RED}{error_msg}{RESET}")
         print(f"{BLUE}🔹 Example usage:{RESET}")
         print('   search_offer "starbucks" "mcdonalds"')
         print(
@@ -128,6 +162,11 @@ def main() -> None:
     display_warnings(all_warnings)
 
     if not all_offers:
+        logger.info("❌ No offers found for any company.")
         print(f"{RED}❌ No offers found for any of the provided companies.{RESET}")
     elif args.save:
         save_offers(all_offers, args.save)
+
+
+if __name__ == "__main__":
+    main()

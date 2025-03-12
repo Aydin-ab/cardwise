@@ -8,6 +8,7 @@ from typing import Dict, List, Optional
 from bs4 import BeautifulSoup, Tag
 
 from bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
+from bank_parser.logger import logger  # ✅ Import centralized logger
 from utils.html_parser import read_html
 
 
@@ -18,8 +19,11 @@ def parse_capital_one_offers(
     if html_path is None:
         html_path = "htmls/capital_one_offers.html"
 
+    logger.info(f"📂 Parsing Capital One offers from: {html_path}")
+
     # ✅ Raise error if file doesn't exist
     if not os.path.exists(html_path):
+        logger.error(f"❌ File not found: {html_path}")
         raise MissingHTMLFileError("Capital One", html_path)
 
     html_doc: str = read_html(html_path)
@@ -37,6 +41,7 @@ def parse_capital_one_offers(
     ]
 
     if not tiles:
+        logger.error(f"❌ No offers found in {html_path}: no valid tiles found")
         raise ValueError("❌ No valid offers found in the Capital One HTML file.")
 
     for tile in tiles:
@@ -44,6 +49,7 @@ def parse_capital_one_offers(
 
         # ✅ Ensure img_tag is a Tag and has `src`
         if not isinstance(img_tag, Tag) or not img_tag.has_attr("src"):
+            logger.error("❌ Can't find offer: Image tag not found or missing 'src' attribute")
             raise InvalidOfferDataError(
                 "Capital One", "Image tag not found or missing 'src' attribute"
             )
@@ -60,10 +66,12 @@ def parse_capital_one_offers(
         if match:
             company_name: str = match.group(1).strip()
         else:
+            logger.error("❌ Company name not found in image URL")
             raise InvalidOfferDataError("Capital One", "Company name not found in the image URL")
 
         offer_divs: List[Tag] = [div for div in tile.find_all("div") if isinstance(div, Tag)]
         if len(offer_divs) < 2:
+            logger.error(f"❌ Offer text missing for company '{company_name}': no text found")
             raise InvalidOfferDataError(
                 "Capital One", f"Offer text not found for company '{company_name}'"
             )
@@ -71,6 +79,7 @@ def parse_capital_one_offers(
         offer_text: str = offer_divs[1].get_text(strip=True)
 
         if not offer_text:
+            logger.error(f"❌ Offer text is empty for '{company_name}'")
             raise InvalidOfferDataError(
                 "Capital One", f"Offer text is empty for company '{company_name}'"
             )
@@ -88,9 +97,15 @@ def parse_capital_one_offers(
                 "reward_type": "points",
             }
         )
+        logger.info(f"✅ Offer parsed: {company_name} - {offer_text}")
 
     if save_to:
-        with open(save_to, "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=4)
+        try:
+            with open(save_to, "w", encoding="utf-8") as f:
+                json.dump(results, f, indent=4)
+            logger.info(f"💾 Offers saved to {save_to}")
+        except Exception as e:
+            logger.error(f"❌ Failed to save offers to {save_to}: {e}")
 
+    logger.info(f"✅ Successfully parsed {len(results)} Capital One offers")
     return results
