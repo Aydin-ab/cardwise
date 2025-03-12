@@ -60,10 +60,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Pyright (if missing)
-        run: pip install pyright  # ✅ Install only Pyright, no need for full Poetry setup
+        uses: jakebailey/pyright-action@v2  # ✅ Install only Pyright, no need for full Poetry setup
 
-      - name: Run Pyright
-        run: pyright
 
   pip-audit:
     runs-on: ubuntu-latest
