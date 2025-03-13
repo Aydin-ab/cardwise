@@ -63,6 +63,7 @@ typeCheckingMode = "strict"
 reportMissingTypeStubs = false
 
 [tool.tox]
+requires = ["tox-conda"]
 env_list = ["py39", "py310", "py311", "py312", "py313", "lint", "type"] 
 skip_missing_interpreters = false
 
@@ -85,5 +86,5 @@ commands = [["ruff", "check", "."]]
 [tool.tox.env.type]
 description = "Run Pyright for type checking"
 skip_install = true
-deps = ["pyright"]
+deps = ["pyright", "python-dotenv"]
 commands = [["pyright"]]

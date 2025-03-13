@@ -18,13 +18,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install Poetry
+        run: pipx install poetry
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install Poetry
-        run: pipx install poetry
+          cache: 'poetry'
 
       - name: Install Dependencies
         run: poetry install  # Faster install, no unnecessary build
@@ -59,19 +60,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Adapt to Poetry
+      - name: Install Poetry
         run: pipx install poetry
+      
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           cache: 'poetry'
+
       - name: Install dependencies
-        run: | 
+        run: |
           poetry install
           echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
       - name: Run Pyright
         uses: jakebailey/pyright-action@v2
+        with:
+          pylance-version: latest-release
 
 
   pip-audit:
