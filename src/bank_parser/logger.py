@@ -17,6 +17,7 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "").strip()
 SMTP_TO = os.getenv("SMTP_TO", "").strip()
 SMTP_FROM = os.getenv("SMTP_FROM", "").strip()
 
+
 # Get current date for timestamped error logs
 log_date = datetime.now().strftime("%Y-%m-%d")
 error_log_filename = f"errors_{log_date}.log"
