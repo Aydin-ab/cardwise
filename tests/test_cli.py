@@ -14,16 +14,14 @@ TEST_HTML_FILES: Dict[str, str] = {
 def test_search_offers_help() -> None:
     """Test CLI help command."""
     result: subprocess.CompletedProcess[str] = subprocess.run(
-        ["poetry", "run", "search_offers", "--help"], capture_output=True, text=True
+        ["search_offers", "--help"], capture_output=True, text=True
     )
     assert "Find the best offers for one or more companies." in result.stdout
 
 
 def test_search_offers_no_args() -> None:
     """Test CLI error when no arguments are provided."""
-    result: subprocess.CompletedProcess[str] = subprocess.run(
-        ["poetry", "run", "search_offers"], capture_output=True, text=True
-    )
+    result: subprocess.CompletedProcess[str] = subprocess.run(["search_offers"], capture_output=True, text=True)
     assert "❌ Error: You must provide at least one company name" in result.stdout
 
 
@@ -43,8 +41,11 @@ def test_search_offers_valid() -> None:
         capture_output=True,
         text=True,
     )
-    assert "✅ Matches found for 'starbucks'" in result.stdout
-    assert "✅ Found 2 offers for 'starbucks':" in result.stdout  # Should find in all banks
+    assert "Here are the best offers found" in result.stdout
+    assert "Starbucks" in result.stdout
+    assert "Bank of America: 10% Cash Back (cash back)" in result.stdout
+    assert "starbucks" in result.stdout
+    assert "Capital One: 5X miles (points)" in result.stdout
 
 
 def test_search_offers_partial_results() -> None:
@@ -57,14 +58,18 @@ def test_search_offers_partial_results() -> None:
             TEST_HTML_FILES["bofa"],
             "--chase-html",
             "missing.html",
+            "--capone-html",
+            TEST_HTML_FILES["capital_one"],
         ],
         capture_output=True,
         text=True,
     )
-    assert "✅ Matches found for 'starbucks'" in result.stdout
-    assert "✅ Found 1 offers for 'starbucks':" in result.stdout  # Only BofA should match
-    assert "⚠️ Warning: Some bank data was unavailable" in result.stdout
-    assert "❌ Error: The HTML file 'missing.html' for Chase does not exist." in result.stdout
+    assert "Here are the best offers found" in result.stdout
+    assert "Starbucks" in result.stdout
+    assert "Bank of America: 10% Cash Back (cash back)" in result.stdout
+    assert "starbucks" in result.stdout
+    assert "Capital One: 5X miles (points)" in result.stdout
+    assert "Error: The HTML file 'missing.html' for Chase does not exist." in result.stdout
 
 
 def test_search_offers_multiple_queries() -> None:
@@ -78,32 +83,64 @@ def test_search_offers_multiple_queries() -> None:
             TEST_HTML_FILES["bofa"],
             "--chase-html",
             TEST_HTML_FILES["chase"],
+            "--capone-html",
+            TEST_HTML_FILES["capital_one"],
         ],
         capture_output=True,
         text=True,
     )
-    assert "✅ Matches found for 'starbucks'" in result.stdout
-    assert "✅ Matches found for 'nike'" in result.stdout
+    assert "Here are the best offers found" in result.stdout
+    assert "Starbucks" in result.stdout
+    assert "Bank of America: 10% Cash Back (cash back)" in result.stdout
+    assert "starbucks" in result.stdout
+    assert "Capital One: 5X miles (points)" in result.stdout
+    assert "Nike" in result.stdout
+    assert "Chase: 15% cash back (cash back)" in result.stdout
 
 
 def test_search_offers_special_chars() -> None:
     """Test CLI handling special characters in company names."""
     result: subprocess.CompletedProcess[str] = subprocess.run(
-        ["search_offers", "mc'donald's", "--bofa-html", TEST_HTML_FILES["bofa"]],
+        [
+            "search_offers",
+            "mc'donald's",
+            "--bofa-html",
+            TEST_HTML_FILES["bofa"],
+            "--chase-html",
+            TEST_HTML_FILES["chase"],
+            "--capone-html",
+            TEST_HTML_FILES["capital_one"],
+        ],
         capture_output=True,
         text=True,
     )
-    assert "✅ Matches found for 'mc'donald's'" in result.stdout  # Should normalize correctly
+    assert "Here are the best offers found" in result.stdout
+    assert "McDonald's" in result.stdout
+    assert "Bank of America: 5% Cash Back (cash back)" in result.stdout
+    assert "Chase: 5% cash back (cash back)" in result.stdout
 
 
 def test_search_offers_case_insensitive() -> None:
     """Test CLI case insensitivity."""
     result: subprocess.CompletedProcess[str] = subprocess.run(
-        ["search_offers", "STARBUCKS", "--bofa-html", TEST_HTML_FILES["bofa"]],
+        [
+            "search_offers",
+            "STARBUCKS",
+            "--bofa-html",
+            TEST_HTML_FILES["bofa"],
+            "--chase-html",
+            TEST_HTML_FILES["chase"],
+            "--capone-html",
+            TEST_HTML_FILES["capital_one"],
+        ],
         capture_output=True,
         text=True,
     )
-    assert "✅ Matches found for 'starbucks'" in result.stdout  # Should match regardless of case
+    assert "Here are the best offers found" in result.stdout
+    assert "Starbucks" in result.stdout
+    assert "Bank of America: 10% Cash Back (cash back)" in result.stdout
+    assert "starbucks" in result.stdout
+    assert "Capital One: 5X miles (points)" in result.stdout
 
 
 def test_search_offers_warning_for_multiple_missing_files() -> None:
@@ -116,14 +153,17 @@ def test_search_offers_warning_for_multiple_missing_files() -> None:
             "invalid.html",
             "--chase-html",
             "missing.html",
+            "--capone-html",
+            TEST_HTML_FILES["capital_one"],
         ],
         capture_output=True,
         text=True,
     )
-    assert "⚠️ Warning: Some bank data was unavailable" in result.stdout
-    assert "❌ Error: The HTML file 'invalid.html' for Bank of America does not exist." in result.stdout
-    assert "❌ Error: The HTML file 'missing.html' for Chase does not exist." in result.stdout
-    assert "❌ No offers found for any of the provided companies." in result.stdout  # No valid banks left
+    assert "Here are the best offers found" in result.stdout
+    assert "starbucks" in result.stdout
+    assert "Capital One: 5X miles (points)" in result.stdout
+    assert "Error: The HTML file 'invalid.html' for Bank of America does not exist." in result.stdout
+    assert "Error: The HTML file 'missing.html' for Chase does not exist." in result.stdout
 
 
 def test_search_offers_save_to(tmp_path: Path) -> None:

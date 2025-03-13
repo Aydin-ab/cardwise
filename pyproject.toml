@@ -58,9 +58,9 @@ line-ending = "auto"
 
 [tool.pyright]
 include = ["src", "tests"]
- pythonVersion = "3.10"
- typeCheckingMode = "strict"
- reportMissingTypeStubs = false
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
+reportMissingTypeStubs = false
 
 [tool.tox]
 env_list = ["py39", "py310", "py311", "py312", "py313", "lint", "type"] 
