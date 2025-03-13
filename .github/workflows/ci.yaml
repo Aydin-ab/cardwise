@@ -59,8 +59,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Pyright (if missing)
-        uses: jakebailey/pyright-action@v2  # ✅ Install only Pyright, no need for full Poetry setup
+      - name: Adapt to Poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          cache: 'poetry'
+      - name: Install dependencies
+        run: | 
+          poetry install
+          echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
+      - name: Run Pyright
+        uses: jakebailey/pyright-action@v2
 
 
   pip-audit:
