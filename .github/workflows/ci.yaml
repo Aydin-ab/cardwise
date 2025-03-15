@@ -18,14 +18,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - uses: snok/install-poetry@v1
+
       - name: Set up Python and cache poetry
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
 
-      - uses: snok/install-poetry@v1
-      - run: poetry install
+      - run: |
+          poetry env use ${{ matrix.python-version }}
+          poetry install
 
       - name: Run Tests
         run: poetry run pytest --cov=src --cov-report=xml
