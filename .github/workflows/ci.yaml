@@ -15,20 +15,10 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Poetry
-        run: pipx install poetry
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup python, poetry
+        uses: ./.github/actions/checkout-python-poetry
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'poetry'
-
-      - name: Install Dependencies
-        run: poetry install  # Faster install, no unnecessary build
 
       - name: Run Tests
         run: poetry run pytest --cov=src --cov-report=xml
@@ -45,33 +35,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Ruff (if missing)
-        run: pip install ruff  # ✅ Install only Ruff, no need for full Poetry setup
-
-      - name: Run Ruff (Lint & Bandit)
-        run: ruff check .
-
-      - name: Run Ruff (Format)
-        run: ruff format
+      - name: Setup ruff
+        uses: astral-sh/ruff-action@v3
+      - name: Run ruff
+        run: |
+          ruff check --fix
+          ruff format
 
   pyright:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Poetry
-        run: pipx install poetry
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          cache: 'poetry'
-
-      - name: Install dependencies
-        run: |
-          poetry install
-          echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+      - name: Setup python, poetry
+        uses: ./.github/actions/checkout-python-poetry
 
       - name: Run Pyright
         uses: jakebailey/pyright-action@v2
@@ -82,17 +57,15 @@ jobs:
   pip-audit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Setup python, poetry
+        uses: ./.github/actions/checkout-python-poetry
+        with:
+          python-version: ${{ matrix.python-version }}
 
-      - name: 'Generate requirements.txt with poetry'
-        run: |
-          pipx install poetry
-          pipx inject poetry poetry-plugin-export
-          poetry export --without-hashes --format=requirements.txt > requirements.txt
+      - run: poetry export --without-hashes --output requirements.txt
 
       - name: 'Run pip-audit'
-        uses: pypa/gh-action-pip-audit@v1.1.0
+        uses: pypa/gh-action-pip-audit@v1
         with:
           inputs: requirements.txt
 

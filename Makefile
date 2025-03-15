@@ -17,34 +17,34 @@ install:
 		conda create -y -n $(ENV_NAME) python=$(PYTHON_VERSION); \
 		echo "⚠️ Run 'conda activate $(ENV_NAME)' before continuing."; \
 	fi
-	conda run -n $(ENV_NAME) pip install poetry  # Ensure Poetry is installed
-	@if ! conda run -n $(ENV_NAME) poetry install; then \
+	pip install poetry  # Ensure Poetry is installed
+	@if ! poetry install; then \
 		echo "🔄 Detected changes in pyproject.toml, regenerating lock file..."; \
-		conda run -n $(ENV_NAME) poetry lock --no-update; \
-		conda run -n $(ENV_NAME) poetry install; \
+		poetry lock --no-update; \
+		poetry install; \
 	fi
 
 # 🔄 Update dependencies (Poetry + Conda) without wiping everything
 update:
 	@echo "🔄 Updating dependencies..."
-	conda run -n $(ENV_NAME) pip install --upgrade poetry  # Upgrade Poetry
-	conda run -n $(ENV_NAME) poetry update  # Update dependencies
-	conda run -n $(ENV_NAME) poetry install  # Ensure all dependencies are installed
+	pip install --upgrade poetry  # Upgrade Poetry
+	poetry update  # Update dependencies and lock file
+	poetry install  # Ensure all dependencies are installed
 	@echo "✅ Dependencies updated!"
 
 # ✅ Run Tests (Supports -html flag for Coverage Report)
 test:
 	@echo "🔬 Running tests..."
-	conda run -n $(ENV_NAME) poetry run pytest --cov=src --cov-report=term-missing; \
+	poetry run pytest --cov=src --cov-report=term-missing; \
 
 # ⚡ Install & Update Pre-commit Hooks
 pre-commit-setup:
-	conda run -n $(ENV_NAME) poetry run pre-commit install
-	conda run -n $(ENV_NAME) poetry run pre-commit autoupdate
+	poetry run pre-commit install
+	poetry run pre-commit autoupdate
 
 # 🏗️ Commit & Push with Pre-commit Check
 commit:
-	conda run -n $(ENV_NAME) poetry run pre-commit run --all-files
+	poetry run pre-commit run --all-files
 	git add .
 	git commit -m "$(shell read -p 'Commit message: ' msg; echo $$msg)"
 	git push

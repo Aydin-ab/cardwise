@@ -1,16 +1,34 @@
-[tool.poetry]
+[project]
 name = "cardwise"
 version = "0.1.0"
 description = "A package to find the best card to use for your purchase"
-authors = ["Aydin Abiar <aydinabiar@gmail.com>"]
+authors = [
+    { name = "Aydin Abiar", email = "aydinabiar@gmail.com" }
+]
 readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["credit-card", "couponing", "cardwise"]
+# classifiers property is dynamic because we want to create Python classifiers automatically
+# dependencies are dynamic because we want to keep Poetry's rich dependency definition format
+dynamic = ["classifiers", "dependencies"]
+
+[project.urls]
+#homepage = "https://python-foobar.org/"
+repository = "https://github.com/Aydin-ab/cardwise"
+#documentation = "https://python-foobar.org/docs"
+
+[tool.poetry]
 packages = [{ include = "bank_parser", from = "src" }]
+classifiers = [ # TODO
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 [tool.poetry.requires-plugins]
-poetry-plugin-export = ">=1.8"
+poetry-plugin-export = ">=1.8" # Exporting the requirements to requirements.txt : poetry export --without-hashes --output requirements.txt
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<4.0" # use if you want to add a upper bound
 beautifulsoup4 = "^4.13.3"
 rapidfuzz = "^3.12.2"
 requests = "^2.32.3"
@@ -29,10 +47,6 @@ trufflehog = "^2.2.1"
 
 [tool.poetry.scripts]
 search_offers = "bank_parser.search_offers:main"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
@@ -63,28 +77,43 @@ typeCheckingMode = "strict"
 reportMissingTypeStubs = false
 
 [tool.tox]
-requires = ["tox-conda"]
 env_list = ["py39", "py310", "py311", "py312", "py313", "lint", "type"] 
 skip_missing_interpreters = false
 
-[tool.tox.env_run_base] # Use this for a Base Test Configuration for All `3.*` environments
-package = "editable" 
+[tool.tox.env_run_base] # Use this for a Base Test Configuration for all py3x versions (except py310)
+description = "Build package with poetry and this python3.x"
+skip_install = true
+allowlist_externals = ["poetry"]
+commands_pre = [["poetry", "install"]]
+commands = [["poetry", "build"]]
+#package = "editable" 
 
 # We run tests only in the 3.10 version to save time
 [tool.tox.env.py310]
-description = "Run tests with pytest"
-package = "editable"  # Install local package in editable mode `pip install -e .`
-deps = ["pytest", "pytest-cov", "pytest-benchmark"]
-commands = [["pytest"]]
+description = "Run tests with pytest with Python 3.10"
+skip_install = true
+allowlist_externals = ["poetry"]
+commands_pre = [["poetry", "install"]]
+#package = "editable"  # Install local package in editable mode `pip install -e .`
+#deps = ["pytest", "pytest-cov", "pytest-benchmark"]
+commands = [["poetry", "run", "pytest"]]
 
 [tool.tox.env.lint]
 description = "Run Ruff for linting"
 skip_install = true
-deps = ["ruff"]
-commands = [["ruff", "check", "."]]
+allowlist_externals = ["poetry"]
+commands_pre = [["poetry", "install"]]
+commands = [["poetry", "run", "ruff", "check", "."]]
 
 [tool.tox.env.type]
 description = "Run Pyright for type checking"
 skip_install = true
-deps = ["pyright", "python-dotenv"]
-commands = [["pyright"]]
+allowlist_externals = ["poetry"]
+commands_pre = [["poetry", "install"]]
+commands = [["poetry", "run", "pyright"]]
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
