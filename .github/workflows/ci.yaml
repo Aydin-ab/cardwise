@@ -17,9 +17,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Setup python, poetry
-        uses: ./.github/actions/checkout-python-poetry
+        uses: ./.github/actions/setup-python-poetry
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -48,8 +48,11 @@ jobs:
   pyright:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup python, poetry
-        uses: ./.github/actions/checkout-python-poetry
+        uses: ./.github/actions/setup-python-poetry
 
       - name: Run Pyright
         uses: jakebailey/pyright-action@v2
@@ -60,8 +63,11 @@ jobs:
   pip-audit:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup python, poetry
-        uses: ./.github/actions/checkout-python-poetry
+        uses: ./.github/actions/setup-python-poetry
         with:
           python-version: ${{ matrix.python-version }}
 
