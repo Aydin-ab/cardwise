@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Setup python and poetry
         uses: ./.github/actions/setup-python-poetry
         with:
@@ -50,8 +50,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup python, poetry
+        
+      - name: Setup python and poetry
         uses: ./.github/actions/setup-python-poetry
 
       - name: Run Pyright
@@ -65,11 +65,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup python, poetry
+        
+      - name: Setup python and poetry
         uses: ./.github/actions/setup-python-poetry
-        with:
-          python-version: ${{ matrix.python-version }}
 
       - run: poetry export --without-hashes --output requirements.txt
 
