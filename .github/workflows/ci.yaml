@@ -54,6 +54,8 @@ jobs:
       - name: Setup python and poetry
         uses: ./.github/actions/setup-python-poetry
 
+      - name: Add poetry bin to PATH (to use the pyright action)
+        run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
       - name: Run Pyright
         uses: jakebailey/pyright-action@v2
         with:
@@ -72,7 +74,7 @@ jobs:
       - run: poetry export --without-hashes --output requirements.txt
 
       - name: 'Run pip-audit'
-        uses: pypa/gh-action-pip-audit@v1
+        uses: pypa/gh-action-pip-audit@v1.1.0
         with:
           inputs: requirements.txt
 
