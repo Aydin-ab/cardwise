@@ -1,5 +1,5 @@
-name: Install Python and Poetry
-
+name: setup-python-poetry
+description: Setup python with Poetry, making sure to cache the dependencies using poetry.lock as a hash
 inputs:
   python-version:
     description: Python version to use
@@ -7,7 +7,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up Python and poetry
+    - name: Set up Python and cache poetry
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
@@ -15,3 +15,4 @@ runs:
 
     - uses: snok/install-poetry@v1
     - run: poetry install
+      shell: bash
