@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Setup python and poetry
-        uses: aydin-ab/setup-python-poetry-action@v1.0.1
+        uses: aydin-ab/setup-python-poetry-action
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup python and poetry
-        uses: aydin-ab/setup-python-poetry-action@v1.0.1
+        uses: aydin-ab/setup-python-poetry-action
 
       - name: Add poetry bin to PATH (to use the pyright action)
         run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:        
       - name: Setup python and poetry
-        uses: aydin-ab/setup-python-poetry-action@v1.0.1
+        uses: aydin-ab/setup-python-poetry-action
 
       - run: poetry export --without-hashes --output requirements.txt
 
