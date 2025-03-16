@@ -50,6 +50,7 @@ jobs:
 
       - name: Add poetry bin to PATH (to use the pyright action)
         run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
       - name: Run Pyright
         uses: jakebailey/pyright-action@v2
         with:
