@@ -45,9 +45,6 @@ jobs:
   pyright:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        
       - name: Setup python and poetry
         uses: aydin-ab/setup-python-poetry-action@v1.0.1
 
