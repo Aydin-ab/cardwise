@@ -42,6 +42,7 @@ jobs:
           ruff check --fix
           ruff format
 
+
   pyright:
     runs-on: ubuntu-latest
     steps:
