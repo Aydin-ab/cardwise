@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Setup python and poetry
-        uses: aydin-ab/setup-python-poetry-action@main
+        uses: aydin-ab/setup-python-poetry-action@v1.1.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -37,7 +37,7 @@ jobs:
 
       - name: Setup ruff
         uses: astral-sh/ruff-action@v3
-        
+
       - name: Run ruff
         run: |
           ruff check --fix
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup python and poetry
-        uses: aydin-ab/setup-python-poetry-action@main
+        uses: aydin-ab/setup-python-poetry-action@v1.1.0
 
       - name: Add poetry bin to PATH (to use the pyright action)
         run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:        
       - name: Setup python and poetry
-        uses: aydin-ab/setup-python-poetry-action@main
+        uses: aydin-ab/setup-python-poetry-action@v1.1.0
 
       - run: poetry export --without-hashes --output requirements.txt
 
