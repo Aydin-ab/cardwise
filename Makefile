@@ -8,28 +8,20 @@ PYTHON_VERSIONS_TOX = 3.8 3.9 3.10 3.11 3.12 3.13
 # 🔥 Default: Install or update dependencies, setup pre-commit, and run tests
 all: install pre-commit-setup test
 
-# 🚀 Install Conda Environment & Poetry Dependencies (if not already installed)
+# 🚀 Install Poetry Environment (if not already installed)
 install:
-	@if conda env list | grep -qw "$(ENV_NAME)"; then \
-		echo "✅ Conda environment '$(ENV_NAME)' exists."; \
-	else \
-		echo "🚀 Creating Conda environment '$(ENV_NAME)' with Python $(PYTHON_VERSION)..."; \
-		conda create -y -n $(ENV_NAME) python=$(PYTHON_VERSION); \
-		echo "⚠️ Run 'conda activate $(ENV_NAME)' before continuing."; \
-	fi
 	pip install poetry  # Ensure Poetry is installed
-	@if ! poetry install; then \
-		echo "🔄 Detected changes in pyproject.toml, regenerating lock file..."; \
-		poetry lock --no-update; \
-		poetry install; \
-	fi
+	poetry install # Install dependencies using lock file (or create one if missing)
 
-# 🔄 Update dependencies (Poetry + Conda) without wiping everything
+install-dev: 
+	pip install poetry  # Ensure Poetry is installed
+	poetry install --all-groups # Install dependencies using lock file (or create one if missing)
+
+# 🔄 Update dependencies (Poetry) without wiping everything
 update:
 	@echo "🔄 Updating dependencies..."
 	pip install --upgrade poetry  # Upgrade Poetry
 	poetry update  # Update dependencies and lock file
-	poetry install  # Ensure all dependencies are installed
 	@echo "✅ Dependencies updated!"
 
 # ✅ Run Tests (Supports -html flag for Coverage Report)
@@ -52,12 +44,12 @@ commit:
 # 🔄 Reset Everything: Remove all generated files, delete Conda environment, and reinstall from scratch
 reset:
 	@echo "🔥 Resetting everything..."
-	@if conda env list | grep -qw "$(ENV_NAME)"; then \
-		echo "🗑️ Deleting Conda environment '$(ENV_NAME)'..."; \
-		conda env remove -y -n $(ENV_NAME); \
-	else \
-		echo "⚠️ Conda environment '$(ENV_NAME)' does not exist, skipping removal."; \
-	fi
 	rm -rf poetry.lock .venv
+	# Enter the current Poetry environment
+	poetry shell
+	# Remove the current environment
+	poetry env remove $(which python)
+	@echo "🔥 Removing Poetry environment..."
+	poetry env remove --all
 	@echo "✅ Environment fully wiped! Reinstalling everything..."
 	$(MAKE) all  # Reinstall everything (install, pre-commit-setup, test)
