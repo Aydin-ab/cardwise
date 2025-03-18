@@ -46,11 +46,10 @@ CMD ["python", "-m", "bank_parser.search_offers"]
 
 
 🛠 8. CI/CD Enhancements
-✅ GitHub Actions Matrix Testing – Run tests on multiple Python versions.
+DONE ✅ GitHub Actions Matrix Testing – Run tests on multiple Python versions.
 ✅ Automatic Versioning – Use bump2version or semantic-release.
 ✅ GitHub Action for Releases – Auto-generate release notes.
 
-Example matrix
 
 
 DOC
