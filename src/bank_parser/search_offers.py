@@ -3,7 +3,7 @@ import json
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
-from bank_parser.logger import logger, set_log_level  # ✅ Import centralized logger
+from bank_parser.logger import init_logger, set_log_level, set_smtp_handler
 from utils.fuzzy_matcher import get_offers_for_company
 
 # ANSI escape codes for colors
@@ -20,7 +20,7 @@ def parse_arguments() -> argparse.Namespace:
         description="Find the best offers for one or more companies.",
         usage='search_offer "starbucks" "mcdonalds" [--save results.json] '
         "[--bofa-html path.html] [--capone-html path.html] [--chase-html path.html]"
-        " [-v | -vv | -vvv] [--log-level INFO]",
+        " [-v | -vv | -vvv] [--log-level INFO] [--enable-email-logs]",
     )
 
     parser.add_argument("queries", nargs="*", type=str, help="Company names to search for")
@@ -64,12 +64,15 @@ def parse_arguments() -> argparse.Namespace:
         help="Manually set log level",
     )
 
+    # 🔥 Add email logging option
+    parser.add_argument(
+        "--enable-email-logs",
+        action="store_true",
+        help="Enable SMTP logging for critical errors",
+    )
+
     args = parser.parse_args()
 
-    # 🔥 Apply log level (Priority: `--log-level` > `-v`)
-    set_log_level(args.verbose, args.log_level)
-
-    logger.info(f"Parsed arguments: {vars(args)}")  # Log parsed arguments
     return args
 
 
@@ -108,6 +111,26 @@ def process_company_offers(queries: List[str], html_paths: Dict[str, str]) -> Tu
     return all_offers, all_warnings
 
 
+def display_results(all_offers: List[Dict[str, str]]):
+    """Displays retrieved offers grouped by company."""
+    if not all_offers:
+        logger.info("❌ No offers found for any company.")
+        print(f"{RED}❌ No offers found for any of the provided companies.{RESET}")
+        return
+
+    # ✅ Group offers by company
+    offers_by_company: Dict[str, List[Dict[str, str]]] = defaultdict(list)
+    for offer in all_offers:
+        offers_by_company[offer["company"]].append(offer)
+
+    # ✅ Print grouped offers
+    print("\n🔹 Here are the best offers found:\n")
+    for company, offers in offers_by_company.items():
+        print(f"{BLUE}📌 {company}{RESET}")  # Company header
+        for offer in offers:
+            print(f"  {GREEN}- {offer['bank']}: {offer['offer']} ({offer['reward_type']}){RESET}")
+
+
 def display_warnings(warnings: List[str]) -> None:
     """Displays warnings related to missing bank data."""
     if warnings:
@@ -130,6 +153,21 @@ def main() -> None:
     """Main function to execute the offer search process."""
     args = parse_arguments()
 
+    global logger
+    logger = init_logger("search_offers")
+
+    set_log_level(logger, verbosity=args.verbose, manual_level=args.log_level)
+    logger.info(f"🔍 Logging level set to {logger.level}")
+    if args.log_level is not None:
+        logger.info("🔍 Log files: search_offers.log and error_[TODAY].log")
+
+    if args.enable_email_logs:
+        try:
+            set_smtp_handler(logger)
+            logger.info("📧 Email SMTP logging enabled for critical")
+        except ValueError as e:
+            logger.error(f"❌ Failed to enable email logging: {e}")
+
     if not args.queries:
         error_msg = "❌ Error: You must provide at least one company name to search for."
         logger.error(error_msg)
@@ -145,28 +183,8 @@ def main() -> None:
     html_paths = build_html_paths(args)
     all_offers, all_warnings = process_company_offers(args.queries, html_paths)
 
+    display_results(all_offers)
     display_warnings(all_warnings)
-
-    if not all_offers:
-        logger.info("❌ No offers found for any company.")
-        print(f"{RED}❌ No offers found for any of the provided companies.{RESET}")
-        return
-
-    # ✅ Group offers by company
-    offers_by_company: Dict[str, List[Dict[str, str]]] = defaultdict(list)
-    for offer in all_offers:
-        offers_by_company[offer["company"]].append(offer)
-
-    # ✅ Print grouped offers
-    print("\n🔹 Here are the best offers found:\n")
-    for company, offers in offers_by_company.items():
-        print(f"{BLUE}📌 {company}{RESET}")  # Company header
-        for offer in offers:
-            print(f"  {GREEN}- {offer['bank']}: {offer['offer']} ({offer['reward_type']}){RESET}")
 
     if args.save:
         save_offers(all_offers, args.save)
-
-
-if __name__ == "__main__":
-    main()

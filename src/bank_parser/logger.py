@@ -6,22 +6,6 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Get environment variables safely (default to empty string if missing)
-SMTP_HOST = os.getenv("SMTP_HOST", "").strip()
-SMTP_PORT = os.getenv("SMTP_PORT", "").strip()
-SMTP_USER = os.getenv("SMTP_USER", "").strip()
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "").strip()
-SMTP_TO = os.getenv("SMTP_TO", "").strip()
-SMTP_FROM = os.getenv("SMTP_FROM", "").strip()
-
-
-# Get current date for timestamped error logs
-log_date = datetime.now().strftime("%Y-%m-%d")
-error_log_filename = f"errors_{log_date}.log"
-
 # ANSI Colors for Terminal Logging
 RESET = "\033[0m"
 COLORS = {
@@ -32,8 +16,12 @@ COLORS = {
     "CRITICAL": "\033[95m",  # Magenta
 }
 
+# Log format
+LOG_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
+LOG_DATE = datetime.now().strftime("%Y-%m-%d")
 
-# 🖨️ Custom Formatter for Colored Console Output
+
+# 🎨 Custom formatter for colored console output
 class ColoredFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         log_color = COLORS.get(record.levelname, RESET)
@@ -41,66 +29,107 @@ class ColoredFormatter(logging.Formatter):
         return f"{log_color}{log_message}{RESET}"
 
 
-# Log format
-log_format = "%(asctime)s [%(levelname)s] %(message)s"
-
-# 🎨 Console handler (Uses colored formatter)
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(ColoredFormatter(log_format))
-console_handler.setLevel(logging.WARNING)  # Default: Only show warnings/errors
-
-# 🔧 Create logger
-logger = logging.getLogger("cardwise")
-logger.setLevel(logging.WARNING)  # Default: Disabled unless `--log-level` is set
-logger.addHandler(console_handler)
-
-
-# Function to enable file logging **only if `--log-level` is used**
-def enable_file_logging(log_level: str):
-    """
-    Enables file logging when `--log-level` is explicitly provided.
-    """
-    file_handler = RotatingFileHandler("cardwise.log", maxBytes=5_000_000, backupCount=3, delay=True)
-    file_handler.setFormatter(logging.Formatter(log_format))
+def _create_file_handler(name: str, log_level: str | int) -> RotatingFileHandler:
+    """Creates a rotating file handler for general logs."""
+    file_handler = RotatingFileHandler(name, maxBytes=5_000_000, backupCount=3, delay=True)
+    file_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     file_handler.setLevel(log_level)
-    logger.addHandler(file_handler)
+    return file_handler
 
-    error_handler = RotatingFileHandler(error_log_filename, maxBytes=2_000_000, backupCount=2, delay=True)
-    error_handler.setFormatter(logging.Formatter(log_format))
+
+def _create_error_handler() -> RotatingFileHandler:
+    """Creates a rotating file handler for error logs."""
+    error_handler = RotatingFileHandler(f"errors_{LOG_DATE}.log", maxBytes=2_000_000, backupCount=2, delay=True)
+    error_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     error_handler.setLevel(logging.ERROR)
-    logger.addHandler(error_handler)
-
-    logger.info("📁 File logging enabled")
+    return error_handler
 
 
-# 📧 Email Error Notifications (Only if SMTP credentials are provided)
-if all([SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_TO, SMTP_FROM]):
-    try:
-        smtp_handler = SMTPHandler(
-            mailhost=(SMTP_HOST, int(SMTP_PORT)),
-            fromaddr=SMTP_FROM,
-            toaddrs=[SMTP_TO],
-            subject="🚨 Cardwise Error Alert!",
-            credentials=(SMTP_USER, SMTP_PASSWORD),
-            secure=(),
-        )
-        smtp_handler.setLevel(logging.CRITICAL)  # Send emails only for critical errors
-        smtp_handler.setFormatter(logging.Formatter(log_format))  # No colors for emails
+def _enable_file_logging(logger: logging.Logger):
+    """Enables file logging when an explicit log level is set."""
+    if not any(isinstance(h, RotatingFileHandler) for h in logger.handlers):
+        logger.addHandler(_create_file_handler(f"{logger.name}.log", logger.level))
+        logger.addHandler(_create_error_handler())
+        # logger.info(f"📁 File logging enabled at {logger.name}.log (level: {logger.level})"
+        #            +f" and errors_{LOG_DATE}.log (level: error)")
+    else:
+        # Update the log level of the file handler of filename 'logger.name'
+        for handler in logger.handlers:
+            if isinstance(handler, RotatingFileHandler) and f"{logger.name}.log" in handler.baseFilename:
+                handler.setLevel(logger.level)
+                break
+        # logger.info(f"📁 File logging updated at {logger.name}.log to level {logger.level})")
+
+
+def _create_smtp_handler() -> SMTPHandler:
+    """Creates an SMTP handler if email credentials are provided."""
+    load_dotenv()
+
+    SMTP_HOST = os.getenv("SMTP_HOST", "").strip()
+    SMTP_PORT = os.getenv("SMTP_PORT", "").strip()
+    SMTP_USER = os.getenv("SMTP_USER", "").strip()
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "").strip()
+    SMTP_TO = os.getenv("SMTP_TO", "").strip()
+    SMTP_FROM = os.getenv("SMTP_FROM", "").strip()
+
+    if not all([SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_TO, SMTP_FROM]):
+        raise ValueError("SMTP environment variables are missing or incomplete")
+
+    smtp_handler = SMTPHandler(
+        mailhost=(SMTP_HOST, int(SMTP_PORT)),
+        fromaddr=SMTP_FROM,
+        toaddrs=[SMTP_TO],
+        subject="🚨 Cardwise Error Alert!",
+        credentials=(SMTP_USER, SMTP_PASSWORD),
+        secure=(),
+    )
+    smtp_handler.setLevel(logging.CRITICAL)
+    smtp_handler.setFormatter(logging.Formatter(LOG_FORMAT))
+    return smtp_handler
+
+
+def set_smtp_handler(logger: logging.Logger):
+    """Adds an SMTP handler for critical error logging."""
+    # Check if SMTP handler doesn't already exist
+    if not any(isinstance(h, SMTPHandler) for h in logger.handlers):
+        smtp_handler = _create_smtp_handler()
         logger.addHandler(smtp_handler)
-        logger.info("✅ SMTP logging enabled")
-    except Exception as e:
-        logger.error(f"❌ Failed to configure SMTP logging: {e}")
-else:
-    logger.warning("⚠️ SMTP logging disabled - Missing required environment variables")
+        # logger.info("✅ SMTP logging enabled")
+    else:
+        # logger.info("✅ SMTP logging already enabled")
+        # Remove existing SMTP handler
+        for handler in logger.handlers:
+            if isinstance(handler, SMTPHandler):
+                logger.removeHandler(handler)
+                break
+        # Add new SMTP handler
+        smtp_handler = _create_smtp_handler()
+        logger.addHandler(smtp_handler)
+        # logger.info("✅ SMTP logging updated")
 
 
-# Suppress logs from external libraries
-logging.getLogger("requests").setLevel(logging.WARNING)  # Suppress detailed logs from requests
-logging.getLogger("urllib3").setLevel(logging.WARNING)  # Same for urllib3
+def _set_log_level_manually(logger: logging.Logger, manual_level: str):
+    """Sets the log level manually."""
+    valid_levels = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
+    level = manual_level.upper()
+    if level not in valid_levels:
+        # logger.error(f"❌ Invalid log level: {manual_level} (Use one of {valid_levels})")
+        raise ValueError(f"Invalid log level: {manual_level} (Use one of {valid_levels})")
+    logger.setLevel(level)
+    _enable_file_logging(logger)
 
 
-### **🔹 Function to Control Log Level via CLI Arguments**
-def set_log_level(verbosity: int = 0, manual_level: Optional[str] = None):
+def _set_log_level_with_verbosity(logger: logging.Logger, verbosity: int):
+    """Sets the log level based on verbosity."""
+    if verbosity == 0:
+        logger.setLevel(logging.WARNING)
+    elif verbosity == 1:
+        logger.setLevel(logging.INFO)
+    elif verbosity >= 2:
+        logger.setLevel(logging.DEBUG)
+
+
+def set_log_level(logger: logging.Logger, verbosity: int = 0, manual_level: Optional[str] = None):
     """
     Adjusts logging based on verbosity (`-v`) or manual log level (`--log-level`).
 
@@ -112,26 +141,35 @@ def set_log_level(verbosity: int = 0, manual_level: Optional[str] = None):
     ✅ Log files will **only** be created if `--log-level` is used.
     """
     if manual_level:
-        level = manual_level.upper()
-        all_levels = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
-        if level in all_levels:
-            logger.setLevel(level)
-            console_handler.setLevel(level)
-            enable_file_logging(level)  # ✅ Enable file logging **only if `--log-level` is set**
-            logger.info(f"🔍 Manual log level set to {level}")
-            return
-        else:
-            logger.error(f"❌ Invalid log level: {manual_level} (Use one of {all_levels})")
-            return
+        _set_log_level_manually(logger, manual_level)
+    else:
+        _set_log_level_with_verbosity(logger, verbosity)
+    # logger.info(f"🔍 Logging level set to {logging.getLevelName(logger.level)}")
 
-    if verbosity == 0:
-        logger.setLevel(logging.WARNING)  # Default (Only warnings and errors)
-        console_handler.setLevel(logging.WARNING)
-    elif verbosity == 1:
-        logger.setLevel(logging.INFO)  # `-v`
-        console_handler.setLevel(logging.INFO)
-    elif verbosity >= 2:
-        logger.setLevel(logging.DEBUG)  # `-vv` and above
-        console_handler.setLevel(logging.DEBUG)
 
-    logger.info(f"🔍 Logging level set to {logging.getLevelName(logger.level)}")
+def init_logger(name: str = "cardwise", default_level: str | int = logging.WARNING) -> logging.Logger:
+    """Initializes and returns a logger instance with default settings."""
+    _reset_logging()
+    logger = logging.getLogger(name)
+
+    logger.setLevel(default_level)  # Default level
+
+    # Console Handler (Colored)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(ColoredFormatter(LOG_FORMAT))
+    logger.addHandler(console_handler)
+
+    return logger
+
+
+# Delete logger if exists
+def _reset_logging():
+    loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
+    loggers.append(logging.getLogger())
+    for logger in loggers:
+        handlers = logger.handlers[:]
+        for handler in handlers:
+            logger.removeHandler(handler)
+            handler.close()
+        logger.setLevel(logging.NOTSET)
+        logger.propagate = True

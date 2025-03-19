@@ -31,7 +31,7 @@ DONE ✅ Sentry – Capture errors in production.
 
 
 📡 7. Deployment & Packaging
-✅ Define a License
+DONE ✅ Define a License
 ✅ Docker – Create a Dockerfile to package the app.
 ✅ PyPI Package – If it’s a library, publish it to PyPI.
 ✅ GitHub Releases – Automate versioning with GitHub Actions & semantic versioning.

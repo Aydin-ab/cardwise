@@ -1,13 +1,13 @@
 # pyright: reportMissingModuleSource=false
 
 import json
+import logging
 import os
 from typing import Dict, List, Optional
 
 from bs4 import BeautifulSoup, Tag
 
 from bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
-from bank_parser.logger import logger  # ✅ Import centralized logger
 from utils.html_parser import read_html
 
 
@@ -15,6 +15,7 @@ def parse_bank_of_america_offers(
     html_path: Optional[str] = None, save_to: Optional[str] = None
 ) -> List[Dict[str, str]]:
     """Parse Bank of America offers from an HTML file."""
+    logger = logging.getLogger("cardwise")
     if html_path is None:
         html_path = "htmls/bank_of_america_offers.html"
 

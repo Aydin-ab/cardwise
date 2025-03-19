@@ -3,6 +3,7 @@
 # pyright: reportMissingImports=false
 
 import json
+import logging
 from typing import Callable, Dict, List, Optional, Tuple
 
 from rapidfuzz import fuzz, process
@@ -10,7 +11,6 @@ from rapidfuzz import fuzz, process
 from bank_parser.bank_of_america import parse_bank_of_america_offers
 from bank_parser.capital_one import parse_capital_one_offers
 from bank_parser.chase import parse_chase_offers
-from bank_parser.logger import logger  # ✅ Import centralized logger
 
 # ✅ Define parser functions for each bank
 PARSERS: Dict[str, Callable[[Optional[str]], List[Dict[str, str]]]] = {
@@ -18,6 +18,8 @@ PARSERS: Dict[str, Callable[[Optional[str]], List[Dict[str, str]]]] = {
     "capital_one": parse_capital_one_offers,
     "chase": parse_chase_offers,
 }
+
+logger = logging.getLogger("cardwise")
 
 
 def load_fresh_offers(
