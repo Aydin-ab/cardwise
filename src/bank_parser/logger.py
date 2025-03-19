@@ -147,7 +147,7 @@ def set_log_level(logger: logging.Logger, verbosity: int = 0, manual_level: Opti
     # logger.info(f"🔍 Logging level set to {logging.getLevelName(logger.level)}")
 
 
-def init_logger(name: str = "cardwise", default_level: str | int = logging.WARNING) -> logging.Logger:
+def init_logger(name: str = "cardwise", default_level: Union[str, int] = logging.WARNING) -> logging.Logger:
     """Initializes and returns a logger instance with default settings."""
     _reset_logging()
     logger = logging.getLogger(name)
