@@ -237,21 +237,35 @@ def test_search_offers_save_to(tmp_path: Path) -> None:
 def test_search_offers_with_stmp(tmp_path: Path) -> None:
     """Test CLI with SMTP logging enabled."""
 
-    result: subprocess.CompletedProcess[str] = subprocess.run(
-        [
-            "search_offers",
-            "starbucks",
-            "--bofa-html",
-            TEST_HTML_FILES["bofa"],
-            "--chase-html",
-            TEST_HTML_FILES["chase"],
-            "--capone-html",
-            TEST_HTML_FILES["capital_one"],
-            "--enable-email-logs",
-        ],
-        capture_output=True,
-        text=True,
-    )
+    with (
+        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch.dict(
+            os.environ,
+            {
+                "SMTP_HOST": "smtp.example.com",
+                "SMTP_PORT": "587",
+                "SMTP_USER": "user@example.com",
+                "SMTP_PASSWORD": "password",
+                "SMTP_TO": "to@example.com",
+                "SMTP_FROM": "from@example.com",
+            },
+        ),
+    ):
+        result: subprocess.CompletedProcess[str] = subprocess.run(
+            [
+                "search_offers",
+                "starbucks",
+                "--bofa-html",
+                TEST_HTML_FILES["bofa"],
+                "--chase-html",
+                TEST_HTML_FILES["chase"],
+                "--capone-html",
+                TEST_HTML_FILES["capital_one"],
+                "--enable-email-logs",
+            ],
+            capture_output=True,
+            text=True,
+        )
 
     assert "📧 Email SMTP logging enabled for critical" in result.stdout
 
