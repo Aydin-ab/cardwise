@@ -93,12 +93,9 @@ def parse_capital_one_offers(html_path: Optional[str] = None, save_to: Optional[
         logger.info(f"✅ Offer parsed: {company_name} - {offer_text}")
 
     if save_to:
-        try:
-            with open(save_to, "w", encoding="utf-8") as f:
-                json.dump(results, f, indent=4)
-            logger.info(f"💾 Offers saved to {save_to}")
-        except Exception as e:
-            logger.error(f"❌ Failed to save offers to {save_to}: {e}")
+        with open(save_to, "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=4)
+        logger.info(f"💾 Offers saved to {save_to}")
 
     logger.info(f"✅ Successfully parsed {len(results)} Capital One offers")
     return results

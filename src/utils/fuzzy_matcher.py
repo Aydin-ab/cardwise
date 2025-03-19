@@ -56,12 +56,9 @@ def load_fresh_offers(
 
     # ✅ Save results to JSON if output_file is provided
     if output_file:
-        try:
-            with open(output_file, "w", encoding="utf-8") as f:
-                json.dump(offers, f, indent=4)
-            logger.info(f"💾 Offers successfully saved to {output_file}")
-        except Exception as e:
-            logger.error(f"❌ Failed to save offers to {output_file}: {e}")
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(offers, f, indent=4)
+        logger.info(f"💾 Offers successfully saved to {output_file}")
 
     logger.info(f"✅ Finished loading offers. Total offers: {len(offers)}")
     return offers, warnings

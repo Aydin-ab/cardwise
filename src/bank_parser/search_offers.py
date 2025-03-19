@@ -141,12 +141,9 @@ def display_warnings(warnings: List[str]) -> None:
 
 def save_offers(offers: List[Dict[str, str]], save_path: str) -> None:
     """Saves retrieved offers to a JSON file."""
-    try:
-        with open(save_path, "w", encoding="utf-8") as f:
-            json.dump(offers, f, indent=4)
-        logger.info(f"💾 Results saved to {save_path}")
-    except Exception as e:
-        logger.error(f"❌ Failed to save offers: {e}")
+    with open(save_path, "w", encoding="utf-8") as f:
+        json.dump(offers, f, indent=4)
+    logger.info(f"💾 Results saved to {save_path}")
 
 
 def main() -> None:
@@ -158,15 +155,16 @@ def main() -> None:
 
     set_log_level(logger, verbosity=args.verbose, manual_level=args.log_level)
     logger.info(f"🔍 Logging level set to {logger.level}")
-    if args.log_level is not None:
-        logger.info("🔍 Log files: search_offers.log and error_[TODAY].log")
 
     if args.enable_email_logs:
         try:
             set_smtp_handler(logger)
             logger.info("📧 Email SMTP logging enabled for critical")
+            print("📧 Email SMTP logging enabled for critical")
         except ValueError as e:
             logger.error(f"❌ Failed to enable email logging: {e}")
+            print(f"{YELLOW}⚠️ Failed to enable email logging: {e}{RESET}")
+            print(f"{YELLOW}🔹 Check your email configuration and try again.{RESET}")
 
     if not args.queries:
         error_msg = "❌ Error: You must provide at least one company name to search for."

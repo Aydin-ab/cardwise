@@ -36,7 +36,7 @@ pre-commit-setup:
 
 # 🏗️ Commit & Push with Pre-commit Check
 commit:
-	poetry run pre-commit run --all-files
+	- poetry run pre-commit run --all-files
 	git add .
 	git commit -m "$(shell read -p 'Commit message: ' msg; echo $$msg)"
 	git push

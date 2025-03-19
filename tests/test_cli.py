@@ -1,7 +1,9 @@
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import Dict
+from unittest import mock
 
 # ✅ Define paths to test-specific HTML files
 TEST_HTML_FILES: Dict[str, str] = {
@@ -46,6 +48,25 @@ def test_search_offers_valid() -> None:
     assert "Bank of America: 10% Cash Back (cash back)" in result.stdout
     assert "starbucks" in result.stdout
     assert "Capital One: 5X miles (points)" in result.stdout
+
+
+def test_search_offers_no_results() -> None:
+    """Test CLI when no offers are found for a company."""
+    result: subprocess.CompletedProcess[str] = subprocess.run(
+        [
+            "search_offers",
+            "unknown company",
+            "--bofa-html",
+            TEST_HTML_FILES["bofa"],
+            "--chase-html",
+            TEST_HTML_FILES["chase"],
+            "--capone-html",
+            TEST_HTML_FILES["capital_one"],
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert "No offers found for any of the provided companies." in result.stdout
 
 
 def test_search_offers_partial_results() -> None:
@@ -211,3 +232,58 @@ def test_search_offers_save_to(tmp_path: Path) -> None:
     ]
 
     assert saved_offers == expected_offers  # ✅ Check saved content
+
+
+def test_search_offers_with_stmp(tmp_path: Path) -> None:
+    """Test CLI with SMTP logging enabled."""
+
+    result: subprocess.CompletedProcess[str] = subprocess.run(
+        [
+            "search_offers",
+            "starbucks",
+            "--bofa-html",
+            TEST_HTML_FILES["bofa"],
+            "--chase-html",
+            TEST_HTML_FILES["chase"],
+            "--capone-html",
+            TEST_HTML_FILES["capital_one"],
+            "--enable-email-logs",
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert "📧 Email SMTP logging enabled for critical" in result.stdout
+
+    with (
+        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch.dict(
+            os.environ,
+            {
+                "SMTP_HOST": "smtp.example.com",
+                "SMTP_PORT": "587",
+                "SMTP_USER": "",  # missing information
+                "SMTP_PASSWORD": "",  # missing information
+                "SMTP_TO": "to@example.com",
+                "SMTP_FROM": "from@example.com",
+            },
+        ),
+    ):
+        result: subprocess.CompletedProcess[str] = subprocess.run(
+            [
+                "search_offers",
+                "starbucks",
+                "--bofa-html",
+                TEST_HTML_FILES["bofa"],
+                "--chase-html",
+                TEST_HTML_FILES["chase"],
+                "--capone-html",
+                TEST_HTML_FILES["capital_one"],
+                "--enable-email-logs",
+            ],
+            capture_output=True,
+            text=True,
+        )
+    assert "SMTP environment variables are missing or incomplete" in result.stderr
+    assert "Failed to enable email logging:" in result.stdout
+    assert "Check your email configuration and try again." in result.stdout

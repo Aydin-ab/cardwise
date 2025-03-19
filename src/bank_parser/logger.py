@@ -50,15 +50,12 @@ def _enable_file_logging(logger: logging.Logger):
     if not any(isinstance(h, RotatingFileHandler) for h in logger.handlers):
         logger.addHandler(_create_file_handler(f"{logger.name}.log", logger.level))
         logger.addHandler(_create_error_handler())
-        # logger.info(f"📁 File logging enabled at {logger.name}.log (level: {logger.level})"
-        #            +f" and errors_{LOG_DATE}.log (level: error)")
     else:
         # Update the log level of the file handler of filename 'logger.name'
         for handler in logger.handlers:
             if isinstance(handler, RotatingFileHandler) and f"{logger.name}.log" in handler.baseFilename:
                 handler.setLevel(logger.level)
                 break
-        # logger.info(f"📁 File logging updated at {logger.name}.log to level {logger.level})")
 
 
 def _create_smtp_handler() -> SMTPHandler:
@@ -91,21 +88,15 @@ def _create_smtp_handler() -> SMTPHandler:
 def set_smtp_handler(logger: logging.Logger):
     """Adds an SMTP handler for critical error logging."""
     # Check if SMTP handler doesn't already exist
-    if not any(isinstance(h, SMTPHandler) for h in logger.handlers):
-        smtp_handler = _create_smtp_handler()
-        logger.addHandler(smtp_handler)
-        # logger.info("✅ SMTP logging enabled")
-    else:
-        # logger.info("✅ SMTP logging already enabled")
+    if any(isinstance(h, SMTPHandler) for h in logger.handlers):
         # Remove existing SMTP handler
         for handler in logger.handlers:
             if isinstance(handler, SMTPHandler):
                 logger.removeHandler(handler)
                 break
-        # Add new SMTP handler
-        smtp_handler = _create_smtp_handler()
-        logger.addHandler(smtp_handler)
-        # logger.info("✅ SMTP logging updated")
+    # Add new SMTP handler
+    smtp_handler = _create_smtp_handler()
+    logger.addHandler(smtp_handler)
 
 
 def _set_log_level_manually(logger: logging.Logger, manual_level: str):
@@ -113,7 +104,6 @@ def _set_log_level_manually(logger: logging.Logger, manual_level: str):
     valid_levels = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
     level = manual_level.upper()
     if level not in valid_levels:
-        # logger.error(f"❌ Invalid log level: {manual_level} (Use one of {valid_levels})")
         raise ValueError(f"Invalid log level: {manual_level} (Use one of {valid_levels})")
     logger.setLevel(level)
     _enable_file_logging(logger)
@@ -144,7 +134,6 @@ def set_log_level(logger: logging.Logger, verbosity: int = 0, manual_level: Opti
         _set_log_level_manually(logger, manual_level)
     else:
         _set_log_level_with_verbosity(logger, verbosity)
-    # logger.info(f"🔍 Logging level set to {logging.getLevelName(logger.level)}")
 
 
 def init_logger(name: str = "cardwise", default_level: Union[str, int] = logging.WARNING) -> logging.Logger:
