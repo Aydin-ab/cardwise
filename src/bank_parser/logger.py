@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import datetime
 from logging.handlers import RotatingFileHandler, SMTPHandler
-from typing import Optional
+from typing import Optional, Union
 
 from dotenv import load_dotenv
 
@@ -29,7 +29,7 @@ class ColoredFormatter(logging.Formatter):
         return f"{log_color}{log_message}{RESET}"
 
 
-def _create_file_handler(name: str, log_level: str | int) -> RotatingFileHandler:
+def _create_file_handler(name: str, log_level: Union[str, int]) -> RotatingFileHandler:
     """Creates a rotating file handler for general logs."""
     file_handler = RotatingFileHandler(name, maxBytes=5_000_000, backupCount=3, delay=True)
     file_handler.setFormatter(logging.Formatter(LOG_FORMAT))

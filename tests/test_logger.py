@@ -111,18 +111,18 @@ def test_smtp_logging_enabled(logger: logging.Logger):
         ),
     ):
         set_smtp_handler(logger)
-        smtp_handlers = [h for h in logger.handlers if isinstance(h, SMTPHandler)]
-        assert len(smtp_handlers) == 1
-        assert smtp_handlers[0].level == logging.CRITICAL
-        assert smtp_handlers[0].formatter._fmt == LOG_FORMAT  # type: ignore # Check log format
-        assert smtp_handlers[0].mailhost == "smtp.example.com"
-        assert smtp_handlers[0].mailport == 587
-        assert smtp_handlers[0].username == "user@example.com"
-        assert smtp_handlers[0].password == "password"  # noqa: S105
-        assert smtp_handlers[0].toaddrs == ["to@example.com"]
-        assert smtp_handlers[0].fromaddr == "from@example.com"
-        assert smtp_handlers[0].subject == "🚨 Cardwise Error Alert!"
-        assert smtp_handlers[0].secure == ()
+    smtp_handlers = [h for h in logger.handlers if isinstance(h, SMTPHandler)]
+    assert len(smtp_handlers) == 1
+    assert smtp_handlers[0].level == logging.CRITICAL
+    assert smtp_handlers[0].formatter._fmt == LOG_FORMAT  # type: ignore # Check log format
+    assert smtp_handlers[0].mailhost == "smtp.example.com"
+    assert smtp_handlers[0].mailport == 587
+    assert smtp_handlers[0].username == "user@example.com"
+    assert smtp_handlers[0].password == "password"  # noqa: S105
+    assert smtp_handlers[0].toaddrs == ["to@example.com"]
+    assert smtp_handlers[0].fromaddr == "from@example.com"
+    assert smtp_handlers[0].subject == "🚨 Cardwise Error Alert!"
+    assert smtp_handlers[0].secure == ()
 
 
 def test_smtp_logging_not_enabled_when_env_missing(logger: logging.Logger):
@@ -179,18 +179,18 @@ def test_smtp_logging_updated(logger: logging.Logger):
         ),
     ):
         set_smtp_handler(logger)
-        smtp_handlers = [h for h in logger.handlers if isinstance(h, SMTPHandler)]
-        assert len(smtp_handlers) == 1  # Only one SMTP handler should be here, no duplicates
-        assert smtp_handlers[0].level == logging.CRITICAL
-        assert smtp_handlers[0].formatter._fmt == LOG_FORMAT  # type: ignore # Check log format
-        assert smtp_handlers[0].mailhost == "smtp.example.com_V2"
-        assert smtp_handlers[0].mailport == 587
-        assert smtp_handlers[0].username == "user@example.com_V2"
-        assert smtp_handlers[0].password == "password_V2"  # noqa: S105
-        assert smtp_handlers[0].toaddrs == ["to@example.com_V2"]
-        assert smtp_handlers[0].fromaddr == "from@example.com_V2"
-        assert smtp_handlers[0].subject == "🚨 Cardwise Error Alert!"
-        assert smtp_handlers[0].secure == ()
+    smtp_handlers = [h for h in logger.handlers if isinstance(h, SMTPHandler)]
+    assert len(smtp_handlers) == 1  # Only one SMTP handler should be here, no duplicates
+    assert smtp_handlers[0].level == logging.CRITICAL
+    assert smtp_handlers[0].formatter._fmt == LOG_FORMAT  # type: ignore # Check log format
+    assert smtp_handlers[0].mailhost == "smtp.example.com_V2"
+    assert smtp_handlers[0].mailport == 587
+    assert smtp_handlers[0].username == "user@example.com_V2"
+    assert smtp_handlers[0].password == "password_V2"  # noqa: S105
+    assert smtp_handlers[0].toaddrs == ["to@example.com_V2"]
+    assert smtp_handlers[0].fromaddr == "from@example.com_V2"
+    assert smtp_handlers[0].subject == "🚨 Cardwise Error Alert!"
+    assert smtp_handlers[0].secure == ()
 
 
 def test_duplicate_handlers_prevented(logger: logging.Logger):
@@ -208,8 +208,22 @@ def test_duplicate_handlers_prevented(logger: logging.Logger):
     assert len(console_handlers) == 1  # Console handler (No duplicates)
 
     # Add SMTP handler twice
-    set_smtp_handler(logger)
-    set_smtp_handler(logger)
+    with (
+        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch.dict(
+            os.environ,
+            {
+                "SMTP_HOST": "smtp.example.com_V2",
+                "SMTP_PORT": "587",
+                "SMTP_USER": "user@example.com_V2",
+                "SMTP_PASSWORD": "password_V2",
+                "SMTP_TO": "to@example.com_V2",
+                "SMTP_FROM": "from@example.com_V2",
+            },
+        ),
+    ):
+        set_smtp_handler(logger)
+        set_smtp_handler(logger)
     handlers = logger.handlers
     smtp_handlers = [h for h in handlers if isinstance(h, SMTPHandler)]
     assert len(smtp_handlers) == 1  # SMTP handler (if configured)
