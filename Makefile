@@ -38,8 +38,14 @@ pre-commit-setup:
 commit:
 	- poetry run pre-commit run --all-files
 	git add .
-	git commit -m "$(shell read -p 'Commit message: ' msg; echo $$msg)"
+	@if [ -z "$(m)" ]; then \
+		read -p "Commit message: " msg; \
+	else \
+		msg="$(m)"; \
+	fi; \
+	git commit -m "$$msg"; \
 	git push
+
 
 # 🔄 Reset Everything: Remove all generated files, delete Conda environment, and reinstall from scratch
 reset:
