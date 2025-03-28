@@ -31,8 +31,8 @@ test:
 
 # ⚡ Install & Update Pre-commit Hooks
 pre-commit-setup:
-	poetry run pre-commit install
 	poetry run pre-commit autoupdate
+	poetry run pre-commit install
 
 # 🏗️ Commit & Push with Pre-commit Check
 commit:
