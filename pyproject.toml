@@ -23,6 +23,7 @@ classifiers = [ # TODO
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+version = "0.0.0"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.8" # Exporting the requirements to requirements.txt : poetry export --without-hashes --output requirements.txt
@@ -44,6 +45,7 @@ pre-commit = "*"
 tox = "^4.24.2"
 pip-audit = "^2.8.0"
 trufflehog = "^2.2.1"
+python-semantic-release = "^9.21.0"
 
 [tool.poetry.scripts]
 search_offers = "bank_parser.search_offers:main"
@@ -112,6 +114,15 @@ allowlist_externals = ["poetry"]
 commands_pre = [["poetry", "install"]]
 commands = [["poetry", "run", "pyright"]]
 
+[tool.semantic_release]
+version_variable = [
+    "src/__init__.py:__version__",
+    "pyproject.toml:version"
+]
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+build_command = "pip install poetry && poetry build"
 
 
 [build-system]
