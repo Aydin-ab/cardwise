@@ -182,7 +182,7 @@ def main() -> None:
     all_offers, all_warnings = process_company_offers(args.queries, html_paths)
 
     display_results(all_offers)
-    display_warnings(all_warnings)
+    display_warnings(all_warnings)  # test
 
     if args.save:
         save_offers(all_offers, args.save)

@@ -95,20 +95,15 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
+      - name: Setup python
         uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
 
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Install dependencies
-        run: poetry install --with dev
-
-      - name: Run semantic-release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: poetry run semantic-release publish
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Semantic Release
+        run: |
+          pip install python-semantic-release
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          semantic-release publish
