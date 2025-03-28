@@ -96,7 +96,10 @@ jobs:
     steps:
       - name: Setup | Checkout Repository on Release Branch
         uses: actions/checkout@v4
-
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          
       - name: Action | Semantic Version Release
         id: release
         # Adjust tag with desired version if applicable.
