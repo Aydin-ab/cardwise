@@ -1,6 +1,6 @@
 [project]
 name = "cardwise"
-version = "0.1.0"
+version = "0.0.0"
 description = "A package to find the best card to use for your purchase"
 authors = [
     { name = "Aydin Abiar", email = "aydinabiar@gmail.com" }
