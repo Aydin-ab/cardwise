@@ -8,9 +8,9 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from rapidfuzz import fuzz, process
 
-from bank_parser.bank_of_america import parse_bank_of_america_offers
-from bank_parser.capital_one import parse_capital_one_offers
-from bank_parser.chase import parse_chase_offers
+from cardwise.bank_parser.bank_of_america import parse_bank_of_america_offers
+from cardwise.bank_parser.capital_one import parse_capital_one_offers
+from cardwise.bank_parser.chase import parse_chase_offers
 
 # ✅ Define parser functions for each bank
 PARSERS: Dict[str, Callable[[Optional[str]], List[Dict[str, str]]]] = {

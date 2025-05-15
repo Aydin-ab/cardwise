@@ -3,8 +3,8 @@ import json
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
-from bank_parser.logger import init_logger, set_log_level, set_smtp_handler
-from utils.fuzzy_matcher import get_offers_for_company
+from cardwise.bank_parser.logger import init_logger, set_log_level, set_smtp_handler
+from cardwise.utils.fuzzy_matcher import get_offers_for_company
 
 # ANSI escape codes for colors
 RED = "\033[91m"

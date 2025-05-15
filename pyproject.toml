@@ -18,12 +18,11 @@ repository = "https://github.com/Aydin-ab/cardwise"
 #documentation = "https://python-foobar.org/docs"
 
 [tool.poetry]
-packages = [{ include = "bank_parser", from = "src" }]
+packages = [{ include = "cardwise", from = "src" }]
 classifiers = [ # TODO
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-version = "0.0.0"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.8" # Exporting the requirements to requirements.txt : poetry export --without-hashes --output requirements.txt
@@ -34,6 +33,7 @@ beautifulsoup4 = "^4.13.3"
 rapidfuzz = "^3.12.2"
 requests = "^2.32.3"
 python-dotenv = "^1.0.1"
+watchdog = "^6.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
@@ -48,7 +48,7 @@ trufflehog = "^2.2.1"
 python-semantic-release = "^9.21.0"
 
 [tool.poetry.scripts]
-search_offers = "bank_parser.search_offers:main"
+search_offers = "cardwise.bank_parser.search_offers:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

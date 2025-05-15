@@ -8,8 +8,8 @@ from typing import Dict, List, Optional
 
 from bs4 import BeautifulSoup, Tag
 
-from bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
-from utils.html_parser import read_html
+from cardwise.bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
+from cardwise.utils.html_parser import read_html
 
 
 def parse_capital_one_offers(html_path: Optional[str] = None, save_to: Optional[str] = None) -> List[Dict[str, str]]:
