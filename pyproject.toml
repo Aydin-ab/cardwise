@@ -123,7 +123,10 @@ version_toml = [
     "pyproject.toml:project.version",  # Implied Default: Number format
 ]
 commit_message = "ci: bump v{version}"
-
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+build_command = "pip install poetry && poetry build"
 
 [build-system]
 requires = ["poetry-core"]
