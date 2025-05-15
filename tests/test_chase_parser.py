@@ -11,8 +11,8 @@ from pathlib import Path
 
 import pytest
 
-from bank_parser.chase import parse_chase_offers
-from bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
+from cardwise.bank_parser.chase import parse_chase_offers
+from cardwise.bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
 
 # ✅ Base path for sample files
 SAMPLES_DIR: str = os.path.join(os.path.dirname(__file__), "samples")

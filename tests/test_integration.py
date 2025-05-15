@@ -8,7 +8,7 @@ from typing import Dict, List
 
 import pytest
 
-from utils.fuzzy_matcher import load_fresh_offers
+from cardwise.utils.fuzzy_matcher import load_fresh_offers
 
 # ✅ Base path for sample files
 SAMPLES_DIR: str = os.path.join(os.path.dirname(__file__), "samples/valid")

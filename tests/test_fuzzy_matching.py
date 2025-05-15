@@ -9,7 +9,7 @@ from typing import Dict, List, Tuple, cast
 import pytest
 from pytest_benchmark.fixture import BenchmarkFixture
 
-from utils.fuzzy_matcher import find_best_matches, get_offers_for_company, load_fresh_offers
+from cardwise.utils.fuzzy_matcher import find_best_matches, get_offers_for_company, load_fresh_offers
 
 
 @pytest.fixture

@@ -6,7 +6,7 @@ from unittest import mock
 
 import pytest
 
-from bank_parser.logger import LOG_FORMAT, init_logger, set_log_level, set_smtp_handler
+from cardwise.bank_parser.logger import LOG_FORMAT, init_logger, set_log_level, set_smtp_handler
 
 
 @pytest.fixture

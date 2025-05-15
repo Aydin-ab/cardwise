@@ -13,8 +13,8 @@ from typing import Any
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
-from bank_parser.bank_of_america import parse_bank_of_america_offers
-from bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
+from cardwise.bank_parser.bank_of_america import parse_bank_of_america_offers
+from cardwise.bank_parser.exceptions import InvalidOfferDataError, MissingHTMLFileError
 
 # ✅ Base path for sample files
 SAMPLES_DIR: str = os.path.join(os.path.dirname(__file__), "samples")
