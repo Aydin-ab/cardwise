@@ -1,0 +1,15 @@
+services:
+  dev:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/cache:ro
+    command: bash -c "cp -r /cache/src /app/src && poetry install --only-root && tail -f /dev/null"
+    tty: true
+    stdin_open: true
+
+  prod:
+    build:
+      context: .
+      target: production

@@ -1,0 +1,47 @@
+# 🔒 Prevent secrets & config files from leaking
+.env
+*.pem
+*.key
+*.crt
+
+# 🔧 Local development artifacts
+*.log
+*.pyc
+__pycache__/
+.cache/
+.mypy_cache/
+coverage.xml
+htmlcov/
+dist/
+build/
+
+# 📦 Python packaging artifacts
+**.egg-info/
+.eggs/
+*.whl
+
+# 🧪 Test-related files
+tests/
+*.pytest_cache/
+
+# 📁 Editor & OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.bak
+Thumbs.db
+
+# ⛔ Git & version control
+.git
+.gitignore
+
+# 🚫 Docker-related files that shouldn't go in the image
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 🚫 CI/CD files that shouldn't go in the image
+.github/
+.gitlab-ci.yml
+.travis.yml
