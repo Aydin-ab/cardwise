@@ -1,6 +1,6 @@
 [project]
 name = "cardwise"
-version = "0.0.0"
+version = "0.0.2"
 description = "A package to find the best card to use for your purchase"
 authors = [
     { name = "Aydin Abiar", email = "aydinabiar@gmail.com" }
@@ -117,12 +117,11 @@ commands = [["poetry", "run", "pyright"]]
 [tool.semantic_release]
 version_variable = [
     "src/__init__.py:__version__",
-    "pyproject.toml:version"
 ]
-branch = "main"
-upload_to_pypi = false
-upload_to_release = true
-build_command = "pip install poetry && poetry build"
+version_toml = [
+    # "file:variable:[format_type]"
+    "pyproject.toml:project.version",  # Implied Default: Number format
+]
 
 
 [build-system]

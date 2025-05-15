@@ -27,6 +27,11 @@
 - Fix style and format from import
   ([`3e7cb01`](https://github.com/Aydin-ab/cardwise/commit/3e7cb01aed09128800a51b8da153a9d295717453))
 
+### Continuous Integration
+
+- Changed commitlint precommit
+  ([`44ac7c2`](https://github.com/Aydin-ab/cardwise/commit/44ac7c249345837061f004ad814030f5e4662900))
+
 
 ## v0.0.1 (2025-03-28)
 
