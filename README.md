@@ -32,9 +32,9 @@ DONE ✅ Sentry – Capture errors in production.
 
 📡 7. Deployment & Packaging
 DONE ✅ Define a License
-✅ Docker – Create a Dockerfile to package the app.
+✅ Docker – Create a Dockerfile to package the app. Then .dockerignore, compose.yaml, README.Dockerfile.md
 ✅ PyPI Package – If it’s a library, publish it to PyPI.
-✅ GitHub Releases – Automate versioning with GitHub Actions & semantic versioning.
+DONE ✅ GitHub Releases – Automate versioning with GitHub Actions & semantic versioning.
 example dockerfile:
 FROM python:3.10
 
@@ -46,9 +46,12 @@ CMD ["python", "-m", "bank_parser.search_offers"]
 
 
 🛠 8. CI/CD Enhancements
+ ✅  Add recomended extension in .vscode
+ ✅  Build a dev container for shared development environment
+✅  Docker build cloud to speed up building
 DONE ✅ GitHub Actions Matrix Testing – Run tests on multiple Python versions.
-✅ Automatic Versioning – Use bump2version or semantic-release.
-✅ GitHub Action for Releases – Auto-generate release notes.
+DONE ✅ Automatic Versioning – Use bump2version or semantic-release.
+DONE ✅ GitHub Action for Releases – Auto-generate release notes.
 
 
 

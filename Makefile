@@ -38,17 +38,13 @@ pre-commit-setup:
 commit:
 	- poetry run pre-commit run --all-files
 	git add .
-	@if [ -z "$(word 2,$(MAKECMDGOALS))" ]; then \
+	@if [ -z "$(m)" ]; then \
 		read -p "Commit message: " msg; \
 	else \
-		msg="$(word 2,$(MAKECMDGOALS))"; \
+		msg="$(m)"; \
 	fi; \
 	git commit -m "$$msg"; \
 	git push
-
-## Allow passing commit message as a positional argument
-%::
-	@:
 
 
 # 🔄 Reset Everything: Remove all generated files, delete Conda environment, and reinstall from scratch
