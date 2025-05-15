@@ -122,6 +122,7 @@ version_toml = [
     # "file:variable:[format_type]"
     "pyproject.toml:project.version",  # Implied Default: Number format
 ]
+commit_message = "ci: bump v{version}"
 
 
 [build-system]
