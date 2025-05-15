@@ -13,10 +13,6 @@ install:
 	pip install poetry  # Ensure Poetry is installed
 	poetry install # Install dependencies using lock file (or create one if missing)
 
-install-dev: 
-	pip install poetry  # Ensure Poetry is installed
-	poetry install --all-groups # Install dependencies using lock file (or create one if missing)
-
 # 🔄 Update dependencies (Poetry) without wiping everything
 update:
 	@echo "🔄 Updating dependencies..."
