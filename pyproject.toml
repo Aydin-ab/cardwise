@@ -116,7 +116,7 @@ commands = [["poetry", "run", "pyright"]]
 
 [tool.semantic_release]
 version_variable = [
-    "src/__init__.py:__version__",
+    "src/cardwise/__init__.py:__version__",
 ]
 version_toml = [
     # "file:variable:[format_type]"
