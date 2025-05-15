@@ -1,6 +1,33 @@
 # CHANGELOG
 
 
+## v0.0.2 (2025-05-15)
+
+### Bug Fixes
+
+- Fix import errors in mocks
+  ([`35cea9c`](https://github.com/Aydin-ab/cardwise/commit/35cea9c503d72667627814be1bbab8adde8bff7b))
+
+### Build System
+
+- Dockerfile, compose and dev container
+  ([`f4af47d`](https://github.com/Aydin-ab/cardwise/commit/f4af47d7043494a3760859e3c8dc158e09bc31dd))
+
+- Redesign src/ tree to follow poetry pattern
+  ([`64f8450`](https://github.com/Aydin-ab/cardwise/commit/64f8450c947bf0ef24349e0572666310f0530992))
+
+### Code Style
+
+- Add reference link to semantic release
+  ([`6df3753`](https://github.com/Aydin-ab/cardwise/commit/6df375337108dedf607df93304cef1ca9a9d5311))
+
+- Added list of types to help doing good commits
+  ([`7a41d02`](https://github.com/Aydin-ab/cardwise/commit/7a41d02470134ebc155389bc5de61c5cef8cca10))
+
+- Fix style and format from import
+  ([`3e7cb01`](https://github.com/Aydin-ab/cardwise/commit/3e7cb01aed09128800a51b8da153a9d295717453))
+
+
 ## v0.0.1 (2025-03-28)
 
 ### Bug Fixes
