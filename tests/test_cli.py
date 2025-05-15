@@ -238,7 +238,7 @@ def test_search_offers_with_stmp(tmp_path: Path) -> None:
     """Test CLI with SMTP logging enabled."""
 
     with (
-        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch("cardwise.bank_parser.logger.load_dotenv"),
         mock.patch.dict(
             os.environ,
             {
@@ -270,7 +270,7 @@ def test_search_offers_with_stmp(tmp_path: Path) -> None:
     assert "📧 Email SMTP logging enabled for critical" in result.stdout
 
     with (
-        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch("cardwise.bank_parser.logger.load_dotenv"),
         mock.patch.dict(
             os.environ,
             {

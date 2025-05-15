@@ -152,7 +152,7 @@ def test_parse_bank_of_america_offers_default_path(valid_boa_html: str, monkeypa
     monkeypatch.setattr("os.path.exists", mock_exists)
 
     # ✅ Monkeypatch the read_html function to return test HTML content
-    monkeypatch.setattr("bank_parser.bank_of_america.read_html", mock_read_html)
+    monkeypatch.setattr("cardwise.bank_parser.bank_of_america.read_html", mock_read_html)
 
     # ✅ Run the parser without passing `html_path`, so it defaults
     offers = parse_bank_of_america_offers()

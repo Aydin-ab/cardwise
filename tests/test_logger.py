@@ -97,7 +97,7 @@ def test_set_log_level_priority(logger: logging.Logger):
 def test_smtp_logging_enabled(logger: logging.Logger):
     """Tests if SMTP logging is enabled when valid SMTP credentials are provided."""
     with (
-        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch("cardwise.bank_parser.logger.load_dotenv"),
         mock.patch.dict(
             os.environ,
             {
@@ -127,7 +127,7 @@ def test_smtp_logging_enabled(logger: logging.Logger):
 
 def test_smtp_logging_not_enabled_when_env_missing(logger: logging.Logger):
     """Tests that SMTP logging is NOT enabled when SMTP environment variables are missing."""
-    with mock.patch("bank_parser.logger.load_dotenv"), mock.patch.dict(os.environ, {}, clear=True):
+    with mock.patch("cardwise.bank_parser.logger.load_dotenv"), mock.patch.dict(os.environ, {}, clear=True):
         with pytest.raises(ValueError, match="SMTP environment variables are missing or incomplete"):
             set_smtp_handler(logger)
 
@@ -136,7 +136,7 @@ def test_smtp_logging_not_enabled_when_env_missing(logger: logging.Logger):
 
     # Again with incomplete SMTP environment variables
     with (
-        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch("cardwise.bank_parser.logger.load_dotenv"),
         mock.patch.dict(os.environ, {"SMTP_HOST": "smtp.example.com", "SMTP_PORT": "587", "SMTP_USER": ""}),
     ):
         with pytest.raises(ValueError, match="SMTP environment variables are missing or incomplete"):
@@ -149,7 +149,7 @@ def test_smtp_logging_not_enabled_when_env_missing(logger: logging.Logger):
 def test_smtp_logging_updated(logger: logging.Logger):
     """Tests that SMTP logging is updated when calling set_smtp_handler multiple times."""
     with (
-        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch("cardwise.bank_parser.logger.load_dotenv"),
         mock.patch.dict(
             os.environ,
             {
@@ -165,7 +165,7 @@ def test_smtp_logging_updated(logger: logging.Logger):
         set_smtp_handler(logger)
 
     with (
-        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch("cardwise.bank_parser.logger.load_dotenv"),
         mock.patch.dict(
             os.environ,
             {
@@ -209,7 +209,7 @@ def test_duplicate_handlers_prevented(logger: logging.Logger):
 
     # Add SMTP handler twice
     with (
-        mock.patch("bank_parser.logger.load_dotenv"),
+        mock.patch("cardwise.bank_parser.logger.load_dotenv"),
         mock.patch.dict(
             os.environ,
             {

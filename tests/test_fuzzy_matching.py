@@ -52,7 +52,7 @@ def test_get_offers_for_company(sample_offers: List[Dict[str, str]], monkeypatch
     def mock_load_offers(_: object) -> Tuple[List[Dict[str, str]], List[str]]:
         return sample_offers, []  # ✅ Returning (offers, warnings) to match the function signature
 
-    monkeypatch.setattr("utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
+    monkeypatch.setattr("cardwise.utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
 
     offers, warnings = get_offers_for_company("starbucks")  # ✅ Unpacking both values
 
@@ -74,7 +74,7 @@ def test_get_offers_with_partial_bank_failures(
             ],  # ✅ Simulate Chase failure
         )
 
-    monkeypatch.setattr("utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
+    monkeypatch.setattr("cardwise.utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
 
     offers, warnings = get_offers_for_company("starbucks")
 
@@ -102,7 +102,7 @@ def test_fuzzy_matching_performance(
     def mock_load_offers(_: object) -> Tuple[List[Dict[str, str]], List[str]]:
         return large_sample, []  # ✅ Returning both offers & warnings
 
-    monkeypatch.setattr("utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
+    monkeypatch.setattr("cardwise.utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
 
     result: List[Dict[str, str]] = cast(List[Dict[str, str]], benchmark(lambda: get_offers_for_company("starbucks")[0]))
 
@@ -113,7 +113,7 @@ def test_load_fresh_offers_handles_none(monkeypatch: pytest.MonkeyPatch) -> None
     """✅ Ensure `html_paths` defaults to an empty dictionary but does not use production data."""
 
     # ✅ Mock all parsers to prevent real file loading
-    monkeypatch.setattr("utils.fuzzy_matcher.PARSERS", {})
+    monkeypatch.setattr("cardwise.utils.fuzzy_matcher.PARSERS", {})
 
     offers, warnings = load_fresh_offers(None)  # ✅ Explicitly passing None
 
@@ -127,7 +127,7 @@ def test_get_offers_returns_warnings_when_no_offers(monkeypatch: pytest.MonkeyPa
     def mock_load_offers(_: object) -> Tuple[List[Dict[str, str]], List[str]]:
         return [], ["❌ Warning: No offers found."]
 
-    monkeypatch.setattr("utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
+    monkeypatch.setattr("cardwise.utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
 
     offers, warnings = get_offers_for_company("starbucks")
 
@@ -141,7 +141,7 @@ def test_get_offers_no_match_but_warnings(sample_offers: List[Dict[str, str]], m
     def mock_load_offers(_: object) -> Tuple[List[Dict[str, str]], List[str]]:
         return sample_offers, ["❌ Warning: Some banks were unavailable."]
 
-    monkeypatch.setattr("utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
+    monkeypatch.setattr("cardwise.utils.fuzzy_matcher.load_fresh_offers", mock_load_offers)
 
     offers, warnings = get_offers_for_company("unknown_brand")  # No match should be found
 
