@@ -110,7 +110,7 @@ def test_parse_bank_of_america_offers_missing_offer(corrupted_no_offer: str) -> 
 
 
 def test_parse_bank_of_america_offers_missing_company(corrupted_no_company: str) -> None:
-    """❌ Test handling of missing company name."""
+    """❌ Test handling of missing company name"""
     with pytest.raises(InvalidOfferDataError) as excinfo:
         parse_bank_of_america_offers(html_path=corrupted_no_company)
     assert "Company name not found" in str(excinfo.value)
