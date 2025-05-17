@@ -1,9 +1,5 @@
 .PHONY: reset all install update test pre-commit-setup commit tox
 
-# Default values (modifiable via arguments, e.g., `make install PYTHON_VERSION=3.11 ENV_NAME=myenv`)
-PYTHON_VERSION ?= 3.10
-ENV_NAME ?= cardwise
-PYTHON_VERSIONS_TOX = 3.8 3.9 3.10 3.11 3.12 3.13
 
 # 🔥 Default: Install or update dependencies, setup pre-commit, and run tests
 all: install pre-commit-setup test
@@ -24,6 +20,19 @@ update:
 test:
 	@echo "🔬 Running tests..."
 	poetry run pytest --cov=src --cov-report=term-missing; \
+
+lint:
+	poetry run ruff check .
+	poetry run ruff format . 
+
+type:
+	poetry run pyright 
+
+# Add command that runs tox to test multiple Python versions
+tox:
+	@echo "🔬 Running tests with Tox..."
+	poetry run tox -p
+	@echo "✅ Tox tests completed!"
 
 # ⚡ Install & Update Pre-commit Hooks
 pre-commit-setup:
