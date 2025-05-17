@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.0.4 (2025-05-17)
+
+### Bug Fixes
+
+- Test again to see if it changes the verison numbers
+  ([`de81c2e`](https://github.com/Aydin-ab/cardwise/commit/de81c2e2d3f9f0f757a200e3245e8ca602818b86))
+
+
 ## v0.0.3 (2025-05-17)
 
 ### Bug Fixes
