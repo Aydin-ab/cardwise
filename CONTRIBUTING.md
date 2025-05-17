@@ -50,6 +50,24 @@ Or you can do it manually:
 
 ---
 
+## 🔨 Improving the App
+### Adding a New Bank Parser
+If adding a bank, please follow these steps:
+1. Add the bank HTML parser function to `src/cardwise/bank_parser/new_bank.py`
+2. Add the key-value pair (bank-function) to `src/cardwise/utils/fuzzy_matcher.py:PARSERS`
+3. Write a test for the new bank parser in `tests/test_{new_bank}.py`
+4. Add the bank HTML path as additional argument to the CLI `src/cardwise/bank_parser/search_offers.py`
+5. Write a test for the new HTML path argument in `tests/test_cli.py`
+
+
+### TODO List
+It would be ideal to have an automatic way to query the banks HTMLs and parse them.
+I've tried writing web scrapers with selenium but they always get blocked by the bank's security.
+If you have any ideas on how to do this, please let me know!
+Until then, we can only download the HTMLs manually and store them in the `htmls/` folder.
+
+---
+
 ## 🧪 Running Tests
 
 We use [pytest](https://docs.pytest.org/en/stable/getting-started.html) for testing and [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/readme.html) for coverage reports.
