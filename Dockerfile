@@ -62,6 +62,11 @@ RUN poetry install --only-root
 COPY . .
 
 
+FROM development AS test
+COPY tests/ tests/
+ENTRYPOINT [ "poetry", "run", "pytest" ]
+
+
 # `production` intermediate building image
 FROM python-poetry-build-base AS production-builder
 COPY --from=builder-base $POETRY_HOME $POETRY_HOME
