@@ -1,6 +1,46 @@
 # CHANGELOG
 
 
+## v0.0.3 (2025-05-17)
+
+### Bug Fixes
+
+- To see if it triggers semantic relase gh actions
+  ([`c0cafb9`](https://github.com/Aydin-ab/cardwise/commit/c0cafb922e3a48172b9fcc54c74c6268ef1d9ffa))
+
+### Continuous Integration
+
+- Add config for semantic release
+  ([`1a4fb60`](https://github.com/Aydin-ab/cardwise/commit/1a4fb60a6a4102a42638359855a116a1608c40cf))
+
+- Add config for semantic release
+  ([`3dffcdf`](https://github.com/Aydin-ab/cardwise/commit/3dffcdfb87ca7ea9d00c2187ec1498815a4bd571))
+
+- Added a test container
+  ([`49a9817`](https://github.com/Aydin-ab/cardwise/commit/49a9817d1486ba34ade1cce3348a61824164435c))
+
+- Added config parameters for semantic release
+  ([`fbc086e`](https://github.com/Aydin-ab/cardwise/commit/fbc086e16038f27673735ebcbbe5b2b24c260ddb))
+
+- Changed commitlint precommit
+  ([`2d9c7f8`](https://github.com/Aydin-ab/cardwise/commit/2d9c7f88eb19116c6d2db3a10d67b6a6d7c63bb0))
+
+- Changed location of __init__ and version number
+  ([`8e2d8e9`](https://github.com/Aydin-ab/cardwise/commit/8e2d8e994b203877a20fe41e495313b8a8dc8b09))
+
+- Changed location of __init__ and version number
+  ([`bf7e964`](https://github.com/Aydin-ab/cardwise/commit/bf7e964574f463380e13307e25cc190800414361))
+
+- Changed location of __init__ and version number
+  ([`86d868c`](https://github.com/Aydin-ab/cardwise/commit/86d868c90416e31f47f217fa9b48af815472ba0d))
+
+- Remove useless command
+  ([`5525192`](https://github.com/Aydin-ab/cardwise/commit/5525192610affde77e91147510716105a44ea8c1))
+
+- Try next version ?
+  ([`9fd5085`](https://github.com/Aydin-ab/cardwise/commit/9fd50851f9a54fad5fdb8e5ebfcc6ae6d0878d2a))
+
+
 ## v0.0.2 (2025-05-15)
 
 ### Bug Fixes
@@ -26,11 +66,6 @@
 
 - Fix style and format from import
   ([`3e7cb01`](https://github.com/Aydin-ab/cardwise/commit/3e7cb01aed09128800a51b8da153a9d295717453))
-
-### Continuous Integration
-
-- Changed commitlint precommit
-  ([`44ac7c2`](https://github.com/Aydin-ab/cardwise/commit/44ac7c249345837061f004ad814030f5e4662900))
 
 
 ## v0.0.1 (2025-03-28)
