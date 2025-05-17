@@ -12,6 +12,7 @@ Docs
 📌 If the project grows, consider Sphinx or MkDocs for auto-generated documentation.
 
 
+
 Security
 DONE ✅ bandit – Static security analysis to catch vulnerabilities in Python code.
 DONE ✅ pip-audit – Checks for known vulnerabilities in dependencies.
