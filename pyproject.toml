@@ -6,7 +6,7 @@ authors = [
     { name = "Aydin Abiar", email = "aydinabiar@gmail.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["credit-card", "couponing", "cardwise"]
 # classifiers property is dynamic because we want to create Python classifiers automatically
 # dependencies are dynamic because we want to keep Poetry's rich dependency definition format
@@ -28,7 +28,7 @@ classifiers = [ # TODO
 poetry-plugin-export = ">=1.8" # Exporting the requirements to requirements.txt : poetry export --without-hashes --output requirements.txt
 
 [tool.poetry.dependencies]
-python = ">=3.9,<4.0" # use if you want to add a upper bound
+python = ">=3.10,<4.0" # use if you want to add a upper bound
 beautifulsoup4 = "^4.13.3"
 rapidfuzz = "^3.12.2"
 requests = "^2.32.3"
@@ -79,7 +79,7 @@ typeCheckingMode = "strict"
 reportMissingTypeStubs = false
 
 [tool.tox]
-env_list = ["py39", "py310", "py311", "py312", "py313", "lint", "type"] 
+env_list = ["py310", "py311", "py312", "py313", "lint", "type"] 
 skip_missing_interpreters = false
 
 [tool.tox.env_run_base] # Use this for a Base Test Configuration for all py3x versions (except py310)
