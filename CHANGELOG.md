@@ -1,6 +1,83 @@
 # CHANGELOG
 
 
+## v1.0.0 (2025-05-20)
+
+### Bug Fixes
+
+- Fixed update and reset command
+  ([`6a17c52`](https://github.com/Aydin-ab/cardwise/commit/6a17c5242644997e79bf4f2e370516da03474353))
+
+### Build System
+
+- Updated deps
+  ([`c89e78d`](https://github.com/Aydin-ab/cardwise/commit/c89e78d47f858585e7cf4085a50d489d260e6851))
+
+### Continuous Integration
+
+- Adding dev commands (lint, type, tox)
+  ([`20d73a9`](https://github.com/Aydin-ab/cardwise/commit/20d73a915d8e7c4658e6877233a1029d46ff000b))
+
+- Adding extra md files
+  ([`c486a36`](https://github.com/Aydin-ab/cardwise/commit/c486a363064e259fc4ed75597912ab818c461f0f))
+
+- Adding pre-commit config file
+  ([`7cedaa0`](https://github.com/Aydin-ab/cardwise/commit/7cedaa09db425fb0385ee74b6977dd89837f9a60))
+
+- Remove prod data
+  ([`ae781b3`](https://github.com/Aydin-ab/cardwise/commit/ae781b38d401cfb102f951d91e4b77e9845db31e))
+
+- Removed hardcoded version in favor of importlib.metadata
+  ([`3d1016c`](https://github.com/Aydin-ab/cardwise/commit/3d1016c2e51b54ca7e899c7287dd3e0ea7a3722d))
+
+### Documentation
+
+- Added template + fixed gitgnore
+  ([`3b90da5`](https://github.com/Aydin-ab/cardwise/commit/3b90da54ba011ab7098c3e29c5e1dcb329ec1269))
+
+- Adding a README.md
+  ([`2557c2d`](https://github.com/Aydin-ab/cardwise/commit/2557c2d7301b921e91f8db08f66a767e91ac4264))
+
+- Adding a todo list and contributing new banks tutorial
+  ([`9df87b5`](https://github.com/Aydin-ab/cardwise/commit/9df87b59f4088bf30f7261580786cee82f646afe))
+
+- Adding contributions.md
+  ([`571d554`](https://github.com/Aydin-ab/cardwise/commit/571d5547b190771460ee5328536db7cb13b5295b))
+
+- Adding placeholder bofa
+  ([`5b959c2`](https://github.com/Aydin-ab/cardwise/commit/5b959c2d76cae182fd2d4549ca65071d3f7ea692))
+
+- Adding placeholder capital one
+  ([`4801dc9`](https://github.com/Aydin-ab/cardwise/commit/4801dc936e9258ad88d8905506b23cb6d49aae6e))
+
+- Adding placeholder chase
+  ([`1751810`](https://github.com/Aydin-ab/cardwise/commit/175181067155ccfa5ea7f1a82b02cdc3c4126779))
+
+- Remove htmls/
+  ([`174d3cd`](https://github.com/Aydin-ab/cardwise/commit/174d3cd219a801f552007eb4af182d0c220bfa47))
+
+### Refactoring
+
+- Refactor to OOP design
+  ([`facd35f`](https://github.com/Aydin-ab/cardwise/commit/facd35fca1084b0bf56e94dc523e203ba11e8232))
+
+The cardwise package has been deeply refactored, using a more OOP approach. All classes and
+  functions have been reorganized into separate modules, and the CLI has been moved to a new module.
+  This refactor aims to enhance the maintainability and readability of the codebase. The following
+  changes have been made:
+
+BREAKING CHANGE: the CLI is not used the same way anymore.
+
+### Testing
+
+- Adapted tests to new OOP design
+  ([`6c6a040`](https://github.com/Aydin-ab/cardwise/commit/6c6a040da444d9fb750dfce94c66aa3c94c757f2))
+
+### Breaking Changes
+
+- The CLI is not used the same way anymore.
+
+
 ## v0.0.4 (2025-05-17)
 
 ### Bug Fixes
