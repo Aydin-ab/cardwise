@@ -4,7 +4,7 @@ default_install_hook_types:
   
 repos:
   - repo: https://github.com/python-poetry/poetry
-    rev: '2.1.1'  # add version here
+    rev: '2.1.3'  # add version here
     hooks:
       - id: poetry-check
       - id: poetry-lock
@@ -12,7 +12,7 @@ repos:
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.11.2
+    rev: v0.11.10
     hooks:
       # Run the linter.
       - id: ruff
@@ -21,24 +21,24 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.397
+    rev: v1.1.400
     hooks:
       - id: pyright
         entry: poetry run pyright # Run within poetry environment to fix missing dependencies
 
   - repo: https://github.com/pypa/pip-audit
-    rev: v2.8.0
+    rev: v2.9.0
     hooks:
       - id: pip-audit
         args: [--ignore-vuln, GHSA-5rjg-fvgr-3xxf]
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.2
+    rev: v8.26.0
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/opensource-nepal/commitlint
-    rev: v1.2.0
+    rev: v1.3.0
     # 'build', 'chore', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test'
     # https://www.conventionalcommits.org/en/v1.0.0/
     hooks:

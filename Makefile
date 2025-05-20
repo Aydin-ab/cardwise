@@ -13,7 +13,8 @@ install:
 update:
 	@echo "🔄 Updating dependencies..."
 	pip install --upgrade poetry  # Upgrade Poetry
-	poetry update  # Update dependencies and lock file
+	poetry update  # Update dependencies and lock file + reinstall
+	poetry install --only-root  # Reinstall root
 	@echo "✅ Dependencies updated!"
 
 # ✅ Run Tests (Supports -html flag for Coverage Report)
@@ -56,11 +57,9 @@ commit:
 reset:
 	@echo "🔥 Resetting everything..."
 	rm -rf poetry.lock .venv
-	# Enter the current Poetry environment
-	poetry shell
 	# Remove the current environment
 	poetry env remove $(which python)
 	@echo "🔥 Removing Poetry environment..."
 	poetry env remove --all
 	@echo "✅ Environment fully wiped! Reinstalling everything..."
-	$(MAKE) all  # Reinstall everything (install, pre-commit-setup, test)
+	$(MAKE) all
