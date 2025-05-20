@@ -43,8 +43,10 @@ pip-wheel-metadata/
 
 # 🚀 Custom: Ignore prod data
 htmls/*.html
+data/*offers.html
 
 # 🚀 Custom: other
 bot/
 LLD_DESIGN.md 
 TODO.md
+make_project.sh
