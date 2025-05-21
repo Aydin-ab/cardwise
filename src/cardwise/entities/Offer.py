@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Literal, Optional
+from enum import Enum
+from typing import Optional
 
 from pydantic import BaseModel, computed_field
 
@@ -7,10 +8,16 @@ from cardwise.entities.BankInfo import BankInfo
 from cardwise.entities.Shop import Shop
 
 
+class OfferTypeEnum(str, Enum):
+    CASHBACK = "cashback"
+    POINTS = "points"
+    MISC = "misc"
+
+
 class Offer(BaseModel):
     shop: Shop
     bank_info: BankInfo
-    offer_type: Literal["cashback", "points", "misc"]
+    offer_type: OfferTypeEnum
     description: str
     expiry_date: Optional[datetime] = None
 
@@ -20,7 +27,7 @@ class Offer(BaseModel):
         """
         Deterministic identifier for this offer.
         """
-        return f"{self.shop.name}|{self.bank_info.name}|{self.offer_type}|{self.description}"
+        return f"{self.shop.id}|{self.bank_info.id}|{self.offer_type}|{self.description}"
 
     def is_expired(self, reference_time: Optional[datetime] = None) -> bool:
         if not self.expiry_date:

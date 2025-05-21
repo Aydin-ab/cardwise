@@ -16,11 +16,11 @@ class BankOfferParser(ABC):
     """
 
     def __init__(self, bank_name: str, parser_id: str):
-        self.bank = BankInfo(name=bank_name, bank_id=parser_id)
+        self.bank_info = BankInfo(name=bank_name)
 
     def parse(self, html_path: Path) -> List[Offer]:
         if not html_path.exists():
-            raise OfferSourceNotFound(self.bank.name, str(html_path))
+            raise OfferSourceNotFound(self.bank_info.name, str(html_path))
 
         with open(html_path, "r", encoding="utf-8") as f:
             html_doc = f.read()

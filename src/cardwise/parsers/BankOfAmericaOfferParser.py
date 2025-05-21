@@ -2,7 +2,7 @@ from typing import List
 
 from bs4 import BeautifulSoup, Tag
 
-from cardwise.entities.Offer import Offer
+from cardwise.entities.Offer import Offer, OfferTypeEnum
 from cardwise.entities.Shop import Shop
 from cardwise.exceptions import (
     OfferDescriptionParsingError,
@@ -22,7 +22,7 @@ class BankOfAmericaOfferParser(BankOfferParser):
         deal_wrappers = [tag for tag in soup.find_all("div", class_="deal-logo-wrapper top") if isinstance(tag, Tag)]
 
         if not deal_wrappers:
-            raise OfferParsingError(self.bank.name, "No offer wrappers found")
+            raise OfferParsingError(self.bank_info.name, "No offer wrappers found")
 
         for wrapper in deal_wrappers:
             img_tag = wrapper.find("img")
@@ -30,7 +30,7 @@ class BankOfAmericaOfferParser(BankOfferParser):
 
             if not isinstance(img_tag, Tag) or not img_tag.has_attr("alt"):
                 raise OfferShopNameParsingError(
-                    self.bank.name,
+                    self.bank_info.name,
                     f"""Missing 'alt' in img tag.
                                                                     Found img tag: {img_tag}""",
                 )
@@ -38,14 +38,14 @@ class BankOfAmericaOfferParser(BankOfferParser):
 
             if not isinstance(span_tag, Tag):
                 raise OfferDescriptionParsingError(
-                    self.bank.name,
+                    self.bank_info.name,
                     f"""Span found is not a tag.
                                                                         Found: {span_tag}""",
                 )
             offer_description = span_tag.get_text(strip=True)
             if not offer_description:
                 raise OfferDescriptionParsingError(
-                    self.bank.name,
+                    self.bank_info.name,
                     f"""Missing text in span tag.
                                                                         Span: {span_tag}""",
                 )
@@ -53,8 +53,8 @@ class BankOfAmericaOfferParser(BankOfferParser):
             results.add(
                 Offer(
                     shop=Shop(name=shop_name),
-                    bank_info=self.bank,
-                    offer_type="cashback",
+                    bank_info=self.bank_info,
+                    offer_type=OfferTypeEnum.CASHBACK,
                     description=offer_description,
                 )
             )

@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from typing import List
 
+from cardwise.db.session import init_db
 from cardwise.exceptions import CardwiseError
 from cardwise.formatters.cli_formatter import CLIFormatter
 from cardwise.formatters.json_formatter import JSONFormatter
@@ -11,7 +12,8 @@ from cardwise.parsers.BankOfAmericaOfferParser import BankOfAmericaOfferParser
 from cardwise.parsers.base import BankOfferParser
 from cardwise.parsers.CapitalOneOfferParser import CapitalOneOfferParser
 from cardwise.parsers.ChaseOfferParser import ChaseOfferParser
-from cardwise.services.offer_finder import OfferFinderService
+from cardwise.services.offer_db_service import OfferDBService
+from cardwise.services.offer_finder_service import OfferFinderService
 
 
 def main():
@@ -30,7 +32,18 @@ def main():
         default="data/htmls",
         help="Directory containing bank offer HTML files",
     )
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help="Refresh the database by clearing all offers and recomputing from HTML files.",
+    )
     args = parser.parse_args()
+
+    init_db()
+
+    if args.refresh:
+        OfferDBService().refresh()
+        print("✅ Offers database cleared. Recomputing from HTML...")
 
     try:
         html_dir = Path(args.html_dir)
