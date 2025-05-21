@@ -17,7 +17,7 @@ class BankOfAmericaOfferParser(BankOfferParser):
         super().__init__(bank_name="Bank of America", parser_id="bank_of_america")
 
     def _extract_offers(self, soup: BeautifulSoup) -> List[Offer]:
-        results: List[Offer] = []
+        results: set[Offer] = set()
 
         deal_wrappers = [tag for tag in soup.find_all("div", class_="deal-logo-wrapper top") if isinstance(tag, Tag)]
 
@@ -50,7 +50,7 @@ class BankOfAmericaOfferParser(BankOfferParser):
                                                                         Span: {span_tag}""",
                 )
 
-            results.append(
+            results.add(
                 Offer(
                     shop=Shop(name=shop_name),
                     bank_info=self.bank,
@@ -59,4 +59,4 @@ class BankOfAmericaOfferParser(BankOfferParser):
                 )
             )
 
-        return results
+        return list(results)

@@ -18,7 +18,7 @@ class CapitalOneOfferParser(BankOfferParser):
         super().__init__(bank_name="Capital One", parser_id="capital_one")
 
     def _extract_offers(self, soup: BeautifulSoup) -> List[Offer]:
-        results: List[Offer] = []
+        results: set[Offer] = set()
 
         tiles = [
             tag
@@ -53,7 +53,7 @@ class CapitalOneOfferParser(BankOfferParser):
             if not offer_description:
                 raise OfferDescriptionParsingError(self.bank.name, f"""Missing text in div tag. Div: {offer_divs[1]}""")
 
-            results.append(
+            results.add(
                 Offer(
                     shop=Shop(name=shop_name),
                     bank_info=self.bank,
@@ -62,4 +62,4 @@ class CapitalOneOfferParser(BankOfferParser):
                 )
             )
 
-        return results
+        return list(results)

@@ -17,7 +17,7 @@ class ChaseOfferParser(BankOfferParser):
         super().__init__(bank_name="Chase", parser_id="chase")
 
     def _extract_offers(self, soup: BeautifulSoup) -> List[Offer]:
-        results: List[Offer] = []
+        results: set[Offer] = set()
         divs = [tag for tag in soup.find_all("div", class_="r9jbije r9jbijl") if isinstance(tag, Tag)]
 
         if not divs:
@@ -40,7 +40,7 @@ class ChaseOfferParser(BankOfferParser):
             if not shop_description:
                 raise OfferDescriptionParsingError(self.bank.name, f"""Missing text in span tag. Span: {spans[1]}""")
 
-            results.append(
+            results.add(
                 Offer(
                     shop=Shop(name=shop_name),
                     bank_info=self.bank,
@@ -49,4 +49,4 @@ class ChaseOfferParser(BankOfferParser):
                 )
             )
 
-        return results
+        return list(results)
