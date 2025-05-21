@@ -48,7 +48,7 @@ trufflehog = "^2.2.1"
 python-semantic-release = "^9.21.0"
 
 [tool.poetry.scripts]
-search_offers = "cardwise.bank_parser.search_offers:main"
+search_offers = "cardwise.cli.main:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
