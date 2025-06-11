@@ -4,10 +4,10 @@ from typing import List
 import pytest
 from bs4 import BeautifulSoup
 
-from cardwise.entities.Offer import Offer
-from cardwise.entities.Shop import Shop
-from cardwise.exceptions import OfferSourceNotFound
-from cardwise.parsers.base import BankOfferParser
+from cardwise.domain.models.offer import Offer, OfferTypeEnum
+from cardwise.domain.models.shop import Shop
+from cardwise.infrastructure.parsers.base_offer_parser import BankOfferParser
+from cardwise.shared.exceptions import OfferSourceNotFound
 
 
 class MockBankOfferParser(BankOfferParser):
@@ -17,12 +17,12 @@ class MockBankOfferParser(BankOfferParser):
         # Mock implementation: Extract offers based on a specific tag
         offers: List[Offer] = []
         for offer_tag in soup.find_all("offer"):
-            offer_type = offer_tag.get("type", "misc")  # type: ignore
+            offer_type: OfferTypeEnum = offer_tag.get("type", "misc")  # type: ignore
             offers.append(
                 Offer(
                     shop=Shop(name="Mock Shop"),
-                    bank_info=self.bank,
-                    offer_type=offer_type,  # type: ignore
+                    bank=self.bank,
+                    offer_type=offer_type,
                     description=offer_tag.text,
                     expiry_date=None,
                 )
@@ -32,7 +32,7 @@ class MockBankOfferParser(BankOfferParser):
 
 @pytest.fixture
 def mock_parser():
-    return MockBankOfferParser(bank_name="Mock Bank", parser_id="mock_bank")
+    return MockBankOfferParser(bank_name="Mock Bank", offer_type=OfferTypeEnum.CASHBACK)
 
 
 def test_parse_file_not_found(mock_parser: MockBankOfferParser):
@@ -46,7 +46,7 @@ def test_parse_valid_html(mock_parser: MockBankOfferParser, tmp_path: Path):
     html_content = """
     <html>
         <body>
-            <offer type="cashback">10% cashback on electronics</offer>
+            <offer type=cashback>10% cashback on electronics</offer>
             <offer type="points">Earn double points on groceries</offer>
         </body>
     </html>
@@ -59,7 +59,7 @@ def test_parse_valid_html(mock_parser: MockBankOfferParser, tmp_path: Path):
 
     # Validate the parsed offers
     assert len(offers) == 2
-    assert offers[0].offer_type == "cashback"
+    assert offers[0].offer_type == OfferTypeEnum.CASHBACK
     assert offers[0].description == "10% cashback on electronics"
-    assert offers[1].offer_type == "points"
+    assert offers[1].offer_type == OfferTypeEnum.POINTS
     assert offers[1].description == "Earn double points on groceries"

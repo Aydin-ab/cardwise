@@ -22,7 +22,6 @@ Thumbs.db
 .env
 
 # 🚀 Logs & Debugging
-logs/
 *.log
 
 # 🚀 Test Coverage & Pytest Cache

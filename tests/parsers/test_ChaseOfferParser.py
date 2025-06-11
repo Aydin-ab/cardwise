@@ -1,16 +1,14 @@
-from typing import List
-
 import pytest
 from bs4 import BeautifulSoup
 
-from cardwise.entities.Offer import Offer
-from cardwise.entities.Shop import Shop
-from cardwise.exceptions import (
+from cardwise.domain.models.offer import Offer, OfferTypeEnum
+from cardwise.domain.models.shop import Shop
+from cardwise.infrastructure.parsers.chase_offer_parser import ChaseOfferParser
+from cardwise.shared.exceptions import (
     OfferDescriptionParsingError,
     OfferParsingError,
     OfferShopNameParsingError,
 )
-from cardwise.parsers.ChaseOfferParser import ChaseOfferParser
 
 
 @pytest.fixture
@@ -30,12 +28,24 @@ def test_extract_offers_success(parser: ChaseOfferParser):
     </div>
     """
     soup = BeautifulSoup(html, "html.parser")
-    offers: List[Offer] = parser._extract_offers(soup)  # type: ignore
+    offers: set[Offer] = set(parser._extract_offers(soup))  # type: ignore
 
-    expected_offers = [
-        Offer(shop=Shop(name="Shop A"), bank_info=parser.bank, offer_type="cashback", description="10% cashback"),
-        Offer(shop=Shop(name="Shop B"), bank_info=parser.bank, offer_type="cashback", description="15% cashback"),
-    ]
+    expected_offers = set(
+        [
+            Offer(
+                shop=Shop(name="Shop A"),
+                bank=parser.bank,
+                offer_type=OfferTypeEnum.CASHBACK,
+                description="10% cashback",
+            ),
+            Offer(
+                shop=Shop(name="Shop B"),
+                bank=parser.bank,
+                offer_type=OfferTypeEnum.CASHBACK,
+                description="15% cashback",
+            ),
+        ]
+    )
 
     assert offers == expected_offers
 

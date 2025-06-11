@@ -1,10 +1,9 @@
-from cardwise.entities.Shop import Shop
+from cardwise.domain.models.shop import Shop
 
 
 def test_shop_creation():
-    shop = Shop(name="Test Shop", category="Retail")
+    shop = Shop(name="Test Shop")
     assert shop.name == "Test Shop"
-    assert shop.category == "Retail"
 
 
 def test_shop_id_generation():
