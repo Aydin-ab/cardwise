@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from cardwise.entities.Offer import Offer
+from cardwise.domain.models.offer import Offer
 
 
 class OfferFormatter(ABC):

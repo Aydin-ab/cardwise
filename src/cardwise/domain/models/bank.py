@@ -1,11 +1,14 @@
-from typing import Optional
+import logging
 
 from pydantic import BaseModel, computed_field
 
+import cardwise.domain.models.utils as utils
 
-class BankInfo(BaseModel):
+logger = logging.getLogger(__name__)
+
+
+class Bank(BaseModel):
     name: str  # Display name
-    website: Optional[str] = None
 
     @computed_field
     @property
@@ -13,16 +16,12 @@ class BankInfo(BaseModel):
         """
         Deterministic unique ID for the BankInfo.
         """
-        # keep only alphanumeric characters
-        id = "".join([c.lower() for c in self.name if c.isalnum() or c == " "])
-        # remove spaces
-        id = id.strip().replace(" ", "_")
-        return id
+        return utils.normalize_string(self.name)
 
     def __hash__(self) -> int:
         return hash(self.id)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, BankInfo):
+        if not isinstance(other, Bank):
             return NotImplemented
         return self.id == other.id

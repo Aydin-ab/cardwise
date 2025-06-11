@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from cardwise.entities.Shop import Shop
+from cardwise.domain.models.shop import Shop
 
 
 class ShopMatcher(ABC):

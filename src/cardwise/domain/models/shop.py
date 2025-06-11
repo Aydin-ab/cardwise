@@ -1,11 +1,14 @@
-from typing import Optional
+import logging
 
 from pydantic import BaseModel, computed_field
+
+import cardwise.domain.models.utils as utils
+
+logger = logging.getLogger(__name__)
 
 
 class Shop(BaseModel):
     name: str  # Canonical name
-    category: Optional[str] = None
 
     @computed_field
     @property
@@ -13,7 +16,7 @@ class Shop(BaseModel):
         """
         Deterministic unique ID for the shop.
         """
-        return self.name.lower().strip().replace(" ", "_")
+        return utils.normalize_string(self.name)
 
     def __hash__(self) -> int:
         return hash(self.id)

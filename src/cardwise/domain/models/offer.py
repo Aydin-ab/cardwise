@@ -1,11 +1,14 @@
+import logging
 from datetime import datetime
 from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, computed_field
 
-from cardwise.entities.BankInfo import BankInfo
-from cardwise.entities.Shop import Shop
+from cardwise.domain.models.bank import Bank
+from cardwise.domain.models.shop import Shop
+
+logger = logging.getLogger(__name__)
 
 
 class OfferTypeEnum(str, Enum):
@@ -16,7 +19,7 @@ class OfferTypeEnum(str, Enum):
 
 class Offer(BaseModel):
     shop: Shop
-    bank_info: BankInfo
+    bank: Bank
     offer_type: OfferTypeEnum
     description: str
     expiry_date: Optional[datetime] = None
@@ -27,12 +30,15 @@ class Offer(BaseModel):
         """
         Deterministic identifier for this offer.
         """
-        return f"{self.shop.id}|{self.bank_info.id}|{self.offer_type}|{self.description}"
+        return f"{self.shop.id}|{self.bank.id}|{self.offer_type}|{self.description}"
 
     def is_expired(self, reference_time: Optional[datetime] = None) -> bool:
         if not self.expiry_date:
+            logger.debug("No expiry date found, offer is not expired.")
             return False
-        return (reference_time or datetime.now()) > self.expiry_date
+        is_expired = (reference_time or datetime.now()) > self.expiry_date
+        logger.debug(f"Offer expired: {is_expired} (expiry date: {self.expiry_date})")
+        return is_expired
 
     def __hash__(self) -> int:
         return hash(self.id)
