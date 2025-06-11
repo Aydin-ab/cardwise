@@ -1,6 +1,38 @@
 # CHANGELOG
 
 
+## v1.0.1 (2025-06-11)
+
+### Bug Fixes
+
+- Fixed search_offers command
+  ([`8acaf82`](https://github.com/Aydin-ab/cardwise/commit/8acaf8200054227b5e6cdb3108acf805fc8b3758))
+
+- Intermediate set to handle duplicated Offers
+  ([`f35fc03`](https://github.com/Aydin-ab/cardwise/commit/f35fc03d833cc97768a7e2cf22907b7117efb43b))
+
+### Build System
+
+- Added coloredlogs dependency
+  ([`8096286`](https://github.com/Aydin-ab/cardwise/commit/80962868f72a8599b6308a8daa0bfc7e4d14e5e9))
+
+- Added sqllite deps
+  ([`8e211f5`](https://github.com/Aydin-ab/cardwise/commit/8e211f52ef0d328cf4c44a8ab4a9d5632e12e867))
+
+### Performance Improvements
+
+- Added sqllite sqlmodel logic
+  ([`f557702`](https://github.com/Aydin-ab/cardwise/commit/f557702c243003227e9ec0d3a7dab0f7d2013b62))
+
+### Refactoring
+
+- Mobile app friendly layout
+  ([`29935f2`](https://github.com/Aydin-ab/cardwise/commit/29935f216e9c210a37c2764f2133676aaf1a34c7))
+
+- Updated imports in tests to new layout
+  ([`e58cd3c`](https://github.com/Aydin-ab/cardwise/commit/e58cd3c88528e3453177e59e43dff20c391b844c))
+
+
 ## v1.0.0 (2025-05-20)
 
 ### Bug Fixes
@@ -9,6 +41,9 @@
   ([`6a17c52`](https://github.com/Aydin-ab/cardwise/commit/6a17c5242644997e79bf4f2e370516da03474353))
 
 ### Build System
+
+- Remove python 3.9
+  ([`60b38a3`](https://github.com/Aydin-ab/cardwise/commit/60b38a3c9b6b26c9752d0ab62eea1d6438aadea8))
 
 - Updated deps
   ([`c89e78d`](https://github.com/Aydin-ab/cardwise/commit/c89e78d47f858585e7cf4085a50d489d260e6851))
