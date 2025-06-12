@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from bs4 import BeautifulSoup
 
@@ -18,7 +18,13 @@ class BankOfferParser(ABC):
     Provides HTML loading and parsing boilerplate.
     """
 
-    def __init__(self, bank_name: str, offer_type: OfferTypeEnum):
+    def __init__(self, bank_name: Optional[str] = None, offer_type: Optional[OfferTypeEnum] = None):
+        if not bank_name:
+            logger.error("Bank name must be provided for the parser.")
+            raise ValueError("Bank name must be provided for the parser.")
+        if not offer_type:
+            logger.error("Offer type must be provided for the parser.")
+            raise ValueError("Offer type must be provided for the parser.")
         self.bank = Bank(name=bank_name)
         self.offer_type = offer_type
 
