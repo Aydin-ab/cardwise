@@ -2,7 +2,7 @@ import logging
 from typing import List
 
 from cardwise.domain.formatters.base_offer_formatter import OfferFormatter
-from cardwise.domain.models.offer import Offer
+from cardwise.domain.models.offer import Offer, OfferTypeEnum
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +19,9 @@ FG_WHITE = "\033[37m"
 FG_GRAY = "\033[90m"
 
 OFFER_TYPE_COLOR = {
-    "cashback": FG_GREEN,
-    "points": FG_BLUE,
-    "misc": FG_MAGENTA,
+    OfferTypeEnum.CASHBACK: FG_GREEN,
+    OfferTypeEnum.POINTS: FG_BLUE,
+    OfferTypeEnum.MISC: FG_MAGENTA,
 }
 
 

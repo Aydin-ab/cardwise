@@ -29,7 +29,7 @@ def offer(shop: Shop, bank: Bank):
 
 
 def test_id(offer: Offer, shop: Shop, bank: Bank):
-    expected_id = f"{shop.id}|{bank.id}|cashback|10% cashback on all purchases"
+    expected_id = f"{shop.id}|{bank.id}|{OfferTypeEnum.CASHBACK}|10% cashback on all purchases"
     assert offer.id == expected_id
 
 

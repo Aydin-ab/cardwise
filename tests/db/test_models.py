@@ -44,7 +44,7 @@ def test_offer_with_foreign_keys(session: Session):
 
     # Insert offer
     offer = OfferDB(
-        id="costco|amex|cashback|10% back",
+        id=f"costco|amex|{OfferTypeEnum.CASHBACK}|10% back",
         shop_id="costco",
         bank_id="amex",
         offer_type=OfferTypeEnum.CASHBACK,
