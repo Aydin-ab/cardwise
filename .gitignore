@@ -23,6 +23,7 @@ Thumbs.db
 
 # 🚀 Logs & Debugging
 *.log
+*.log.*
 
 # 🚀 Test Coverage & Pytest Cache
 .coverage
