@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from cardwise.domain.models.offer import Offer
-from cardwise.infrastructure.db.repositories.base_offer_repository import AbstractOfferRepository
+from cardwise.infrastructure.db.repositories.base_offer_repository import OfferRepository
 from cardwise.infrastructure.db.repositories.SQLModel_offer_repository import SQLModelOfferRepository
 from cardwise.infrastructure.parsers.base_offer_parser import BankOfferParser
 
@@ -15,7 +15,7 @@ class OfferDataLoader:
         self,
         parsers: List[BankOfferParser],
         html_dir: Path,
-        repository: Optional[AbstractOfferRepository] = None,
+        repository: Optional[OfferRepository] = None,
     ):
         self.parsers = parsers
         self.html_dir = html_dir

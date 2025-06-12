@@ -6,13 +6,13 @@ from sqlmodel import select
 from cardwise.domain.models.offer import Offer
 from cardwise.infrastructure.db.mapper import db_to_offer, offer_to_db
 from cardwise.infrastructure.db.models import BankDB, OfferDB, ShopDB
-from cardwise.infrastructure.db.repositories.base_offer_repository import AbstractOfferRepository
+from cardwise.infrastructure.db.repositories.base_offer_repository import OfferRepository
 from cardwise.infrastructure.db.session import drop_db, get_session, init_db
 
 logger = logging.getLogger(__name__)
 
 
-class SQLModelOfferRepository(AbstractOfferRepository):
+class SQLModelOfferRepository(OfferRepository):
     def get_all(self) -> List[Offer]:
         with get_session() as session:
             logger.debug("Fetching all offers from the database...")

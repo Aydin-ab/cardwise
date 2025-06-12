@@ -4,7 +4,7 @@ from typing import List
 from cardwise.domain.models.offer import Offer
 
 
-class AbstractOfferRepository(ABC):
+class OfferRepository(ABC):
     @abstractmethod
     def get_all(self) -> List[Offer]: ...
 
