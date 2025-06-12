@@ -19,7 +19,7 @@ handlers:
     class: logging.handlers.RotatingFileHandler
     level: DEBUG
     formatter: file_formatter
-    filename: "src/cardwise/logs/cardwise.log"
+    filename: "src/cardwise/infrastructure/logs/cardwise.log"
     maxBytes: 5000000  # 5 MB
     backupCount: 3
 
@@ -27,7 +27,7 @@ handlers:
     class: logging.handlers.RotatingFileHandler
     level: ERROR
     formatter: file_formatter
-    filename: "src/cardwise/logs/errors.log"
+    filename: "src/cardwise/infrastructure/logs/errors.log"
     maxBytes: 2000000  # 2 MB
     backupCount: 2
 
