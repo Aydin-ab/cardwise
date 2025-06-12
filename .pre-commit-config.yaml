@@ -30,8 +30,7 @@ repos:
     rev: v2.9.0
     hooks:
       - id: pip-audit
-        args: [--ignore-vuln, GHSA-5rjg-fvgr-3xxf,
-              --ignore-vuln, GHSA-9hjg-9r4m-mvj7]
+        args: [--ignore-vuln, GHSA-9hjg-9r4m-mvj7]
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.26.0
