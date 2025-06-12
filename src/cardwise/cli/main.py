@@ -9,19 +9,19 @@ import yaml
 
 from cardwise.app.data_loader import OfferDataLoader
 from cardwise.app.offer_finder_service import OfferFinderService
-from cardwise.domain.formatters.cli_offer_formatter import CLIOfferFormatter
-from cardwise.domain.formatters.json_offer_formatter import JSONOfferFormatter
-from cardwise.domain.matchers.rapidfuzz_shopmatcher import RapidFuzzShopMatcher
-from cardwise.infrastructure.db.repositories.SQLModel_offer_repository import SQLModelOfferRepository
+from cardwise.domain.formatters.base_offer_formatter import OfferFormatter
+from cardwise.domain.formatters.utils import get_offer_formatter
+from cardwise.domain.matchers.base_shopmatcher import ShopMatcher
+from cardwise.domain.matchers.utils import get_shop_matcher
+from cardwise.infrastructure.db.repositories.base_offer_repository import OfferRepository
+from cardwise.infrastructure.db.repositories.utils import get_offer_repository
 from cardwise.infrastructure.db.session import init_db
 from cardwise.infrastructure.logs.logging import set_log_level
-from cardwise.infrastructure.parsers.bank_of_america_offer_parser import BankOfAmericaOfferParser
 from cardwise.infrastructure.parsers.base_offer_parser import BankOfferParser
-from cardwise.infrastructure.parsers.capital_one_offer_parser import CapitalOneOfferParser
-from cardwise.infrastructure.parsers.chase_offer_parser import ChaseOfferParser
+from cardwise.infrastructure.parsers.parser_registry import discover_parsers
 from cardwise.shared.exceptions import CardwiseError
 
-with open("src/cardwise/logs/logging_config.yaml", "r") as f:
+with open("src/cardwise/infrastructure/logs/logging_config.yaml", "r") as f:
     logging_config = yaml.safe_load(f)
 
 logging.config.dictConfig(logging_config)
@@ -49,8 +49,10 @@ def main():
         action="store_true",
         help="Refresh the database by clearing all offers and recomputing from HTML files.",
     )
-    parser.add_argument("-v", "--verbose", action="count", default=0)
-    parser.add_argument("--log-level", help="Set log level manually", type=str, default=None)
+    parser.add_argument(
+        "-v", "--verbose", action="count", default=0, help="Increase verbosity of logs (use -vv for DEBUG level)"
+    )
+    parser.add_argument("--log-level", type=str, default=None, help="Set log level manually")
     args = parser.parse_args()
     set_log_level(logger, verbosity=args.verbose, manual_level=args.log_level)
 
@@ -69,13 +71,9 @@ def main():
     try:
         html_dir = Path(args.html_dir)
 
-        parsers: List[BankOfferParser] = [
-            BankOfAmericaOfferParser(),
-            CapitalOneOfferParser(),
-            ChaseOfferParser(),
-        ]
+        parsers: List[BankOfferParser] = discover_parsers()
         logger.debug(f"{len(parsers)} Parsers initialized: {parsers}")
-        repository = SQLModelOfferRepository()
+        repository: OfferRepository = get_offer_repository()
         logger.debug(f"Repository initialized: {repository}")
         data_loader = OfferDataLoader(parsers, html_dir, repository)
         logger.debug(f"Data loader initialized: {data_loader}")
@@ -83,9 +81,9 @@ def main():
             logger.debug("Refreshing offers from HTML files...")
             data_loader.refresh_offers_from_html()
             print("✅ Offers database cleared and recomputed from HTML")
-        shop_matcher = RapidFuzzShopMatcher()
+        shop_matcher: ShopMatcher = get_shop_matcher()
         logger.debug(f"Matcher initialized: {shop_matcher}")
-        formatter = JSONOfferFormatter() if args.json else CLIOfferFormatter()
+        formatter: OfferFormatter = get_offer_formatter(args.json)
         logger.debug(f"Formatter initialized: {formatter}")
 
         finder_service = OfferFinderService(
