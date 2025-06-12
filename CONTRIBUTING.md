@@ -53,11 +53,10 @@ Or you can do it manually:
 ## 🔨 Improving the App
 ### Adding a New Bank Parser
 If adding a bank, please follow these steps:
-1. Add the bank HTML parser function to `src/cardwise/bank_parser/new_bank.py`
-2. Add the key-value pair (bank-function) to `src/cardwise/utils/fuzzy_matcher.py:PARSERS`
-3. Write a test for the new bank parser in `tests/test_{new_bank}.py`
-4. Add the bank HTML path as additional argument to the CLI `src/cardwise/bank_parser/search_offers.py`
-5. Write a test for the new HTML path argument in `tests/test_cli.py`
+1. Add the bank HTML parser to `src/cardwise/infrastructure/parsers/{new_bank}_offer_parser.py`
+2. Write a test for the new bank parser in `tests/parsers/test_{new_bank}_offer_parser.py`
+3. Add the bank HTML path as additional argument to the CLI `src/cardwise/cli/main.py`
+4. Write a test for the new HTML path argument in `tests/test_cli.py`
 
 
 ### TODO List
