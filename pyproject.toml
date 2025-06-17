@@ -18,7 +18,9 @@ repository = "https://github.com/Aydin-ab/cardwise"
 #documentation = "https://python-foobar.org/docs"
 
 [tool.poetry]
-packages = [{ include = "cardwise", from = "src" }]
+packages = [
+    { include = "cardwise" }
+]
 classifiers = [ # TODO
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -30,12 +32,19 @@ poetry-plugin-export = ">=1.8" # Exporting the requirements to requirements.txt 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0" # use if you want to add a upper bound
 beautifulsoup4 = "^4.13.3"
-rapidfuzz = "^3.12.2"
 requests = "^2.32.3"
 python-dotenv = "^1.0.1"
-watchdog = "^6.0.0"
+google-cloud-storage = "^3.1.0"
+
+[tool.poetry.group.backend.dependencies]
+fastapi = {extras = ["standard"], version = "^0.115.12"}
 sqlmodel = "^0.0.24"
+pydantic-settings = "^2.9.1"
+rapidfuzz = "^3.12.2"
+psycopg2-binary = "^2.9.10"
 coloredlogs = "^15.0.1"
+toml = "^0.10.2"
+
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
@@ -50,10 +59,9 @@ trufflehog = "^2.2.1"
 python-semantic-release = "^9.21.0"
 
 [tool.poetry.scripts]
-search_offers = "cardwise.cli.main:main"
+cardwise = "cli.main:app"
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
 testpaths = ["tests"]
 
 [tool.ruff]

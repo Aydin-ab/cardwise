@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: cardwise-backend
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false     # keep this one set from the dashboard
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DEBUG
+        value: "False"  # must be quoted to stay a string
