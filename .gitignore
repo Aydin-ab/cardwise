@@ -20,6 +20,13 @@ Thumbs.db
 
 # Ignore environment variables
 .env
+.env.cli
+.env.backend
+.env.ingestion
+
+# Ignore credential files
+credentials.json
+ingestion-bot-key.json
 
 # 🚀 Logs & Debugging
 *.log
@@ -42,7 +49,7 @@ pip-wheel-metadata/
 .ipynb_checkpoints/
 
 # 🚀 Custom: Ignore prod data
-data/htmls/*offers.html
+ingestion/data/
 
 # 🚀 Custom: other
 bot/
