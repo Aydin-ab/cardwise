@@ -18,7 +18,7 @@ def run(shop: List[str]):
     Example: `cardwise search adidas "shake shack"`
     """
     print(f"🔍 Searching for: {shop}")
-    search_api = f"{settings.api_url}/search"
+    search_api = f"{settings.api_url}/offers/search"
     response = requests.get(search_api, params=[("shops", s) for s in shop], timeout=10)
     if response.status_code != 200:
         typer.echo(f"❌ Error: {response.status_code} — {response.text}")

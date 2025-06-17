@@ -4,11 +4,11 @@ import '../models/offer.dart';
 
 class OfferApiService {
   // Use emulator-friendly localhost address
-  final String baseUrl = "http://10.0.2.2:8000/offers";
+  final String baseUrl = "https://cardwise-backend-api.onrender.com";
 
   Future<List<Offer>> searchOffers(String shopName) async {
     final response = await http.get(
-      Uri.parse("$baseUrl/search/?shops=${Uri.encodeQueryComponent(shopName)}"),
+      Uri.parse("$baseUrl/offers/search/?shops=${Uri.encodeQueryComponent(shopName)}"),
     );
 
     if (response.statusCode == 200) {
@@ -25,7 +25,7 @@ class OfferApiService {
     for (final name in shopNames) {
       try {
         final response = await http.get(
-          Uri.parse("$baseUrl/search?shops=${Uri.encodeQueryComponent(name)}"),
+          Uri.parse("$baseUrl/offers/search?shops=${Uri.encodeQueryComponent(name)}"),
         );
         if (response.statusCode == 200) {
           final List<dynamic> jsonList = jsonDecode(response.body);
@@ -42,7 +42,7 @@ class OfferApiService {
 
 
   Future<List<Offer>> getAllOffers() async {
-    final response = await http.get(Uri.parse("$baseUrl/all"));
+    final response = await http.get(Uri.parse("$baseUrl/offers/all"));
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
