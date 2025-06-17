@@ -50,6 +50,7 @@ pip-wheel-metadata/
 
 # 🚀 Custom: Ignore prod data
 ingestion/data/
+*.db
 
 # 🚀 Custom: other
 bot/
