@@ -35,6 +35,14 @@ tox:
 	poetry run tox -p
 	@echo "✅ Tox tests completed!"
 
+fastapi:
+	@echo "🚀 Starting FastAPI server..."
+	poetry run uvicorn backend.app.main:app --reload
+
+flutter:
+	@echo "🚀 Starting Flutter app..."
+	cd frontend/mobile_app && flutter run -d emulator-5554
+
 # ⚡ Install & Update Pre-commit Hooks
 pre-commit-setup:
 	poetry run pre-commit autoupdate
