@@ -1,6 +1,85 @@
 # CHANGELOG
 
 
+## v1.0.2 (2025-06-17)
+
+### Bug Fixes
+
+- Allow CORS origin
+  ([`22a14f1`](https://github.com/Aydin-ab/cardwise/commit/22a14f1b221a3fbb786e116a8ccf1d991d5f7556))
+
+### Chores
+
+- Add error handling in instanciation
+  ([`506b77e`](https://github.com/Aydin-ab/cardwise/commit/506b77e163405665e6f4b80d5e887565a565e9c2))
+
+### Continuous Integration
+
+- Add command for fastapi and flutter
+  ([`9c47da5`](https://github.com/Aydin-ab/cardwise/commit/9c47da5da6d130ad37c4275a9bc7e9bfa7b38e71))
+
+- Adding dummy readme to keep logs folder alive
+  ([`fffdb8b`](https://github.com/Aydin-ab/cardwise/commit/fffdb8b8f5e03e719ba508d019b1b83d116a05e6))
+
+- Fix dockerfile name
+  ([`ac76610`](https://github.com/Aydin-ab/cardwise/commit/ac766105a63c839cf28c9f1bf41dbebe9f7147e7))
+
+- Fixed argument to pip audit
+  ([`9819a68`](https://github.com/Aydin-ab/cardwise/commit/9819a68117ca76ca3c5d7c733f2ea62a2bcf629b))
+
+- Fixed argument to pip audit
+  ([`9660050`](https://github.com/Aydin-ab/cardwise/commit/9660050986bf0ab7624efbe0ca69b79e10dba57b))
+
+- Ignore long log files
+  ([`ca54eae`](https://github.com/Aydin-ab/cardwise/commit/ca54eae3ec540b5771802b93eed47d8c4d3b5173))
+
+- Prepare render serving backend
+  ([`5ec718d`](https://github.com/Aydin-ab/cardwise/commit/5ec718d647167f5eb0def66a9e5cffb102a2160e))
+
+- Remove data files
+  ([`776276c`](https://github.com/Aydin-ab/cardwise/commit/776276c61047d82b637aea339af80584d116ab8a))
+
+- Remove pip audit unneceseary check on specific error
+  ([`b70d22e`](https://github.com/Aydin-ab/cardwise/commit/b70d22e1600a0961f67c30996ff29783f4924aba))
+
+- Remove sqlite database
+  ([`5a7942c`](https://github.com/Aydin-ab/cardwise/commit/5a7942c6ffba38d89e001e9388279f850302d859))
+
+- Update to backend api
+  ([`f3f146a`](https://github.com/Aydin-ab/cardwise/commit/f3f146aca050281602c776f98169774e9de8c469))
+
+### Documentation
+
+- Update text about adding new parser
+  ([`0bf60e1`](https://github.com/Aydin-ab/cardwise/commit/0bf60e1dd62a057e9b58f0d92e04be69ce703b35))
+
+### Refactoring
+
+- Abstract objects to higher level CLI script
+  ([`c6077d8`](https://github.com/Aydin-ab/cardwise/commit/c6077d8211c905eb30e077db28cb878888b439bb))
+
+- Change string to enum to avoid test error in python 3.11+
+  ([`e208f8a`](https://github.com/Aydin-ab/cardwise/commit/e208f8a9ba9c68b768075d8fbf5fa524d11126ed))
+
+- Changed name of OfferRepository class
+  ([`a2c6b28`](https://github.com/Aydin-ab/cardwise/commit/a2c6b2872d69c1c2c10c43f1b613720ffe8798d5))
+
+- Deleted data folder
+  ([`4e3dc6a`](https://github.com/Aydin-ab/cardwise/commit/4e3dc6ada23afdd12beabc56bbba45162166f382))
+
+- Deleted src/ layout
+  ([`b6b7f89`](https://github.com/Aydin-ab/cardwise/commit/b6b7f8955df901bb60534f9b1adf6575abe0a8fe))
+
+- Separate services
+  ([`925cc77`](https://github.com/Aydin-ab/cardwise/commit/925cc779efecd1c7441749f68a5110924ddd69b7))
+
+- Updated path to log files to new layout
+  ([`6dc12fe`](https://github.com/Aydin-ab/cardwise/commit/6dc12fe35061b8f050ec639e39753b0a9f366c1a))
+
+- Write tests
+  ([`f09e2af`](https://github.com/Aydin-ab/cardwise/commit/f09e2afe854c13b2bb5d97fed66a5786d514e0b2))
+
+
 ## v1.0.1 (2025-06-11)
 
 ### Bug Fixes
