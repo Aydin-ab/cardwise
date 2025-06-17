@@ -1,0 +1,49 @@
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  file_formatter:
+    format: "%(asctime)s [%(levelname)s] %(filename)s:%(lineno)d in %(funcName)s — %(message)s"
+  colored_formatter:
+    format: "%(asctime)s [%(levelname)s] %(filename)s:%(lineno)d in %(funcName)s — %(message)s"
+    class: coloredlogs.ColoredFormatter
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: colored_formatter
+    stream: ext://sys.stdout
+
+  file:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: file_formatter
+    filename: "ingestion/logs/ingestion.log"
+    maxBytes: 5000000  # 5 MB
+    backupCount: 3
+
+  error_file:
+    class: logging.handlers.RotatingFileHandler
+    level: ERROR
+    formatter: file_formatter
+    filename: "ingestion/logs/errors.log"
+    maxBytes: 2000000  # 2 MB
+    backupCount: 2
+
+  smtp:
+    class: logging.handlers.SMTPHandler
+    level: CRITICAL
+    formatter: file_formatter
+    mailhost: ["smtp.example.com", 587]
+    fromaddr: "alerts@example.com"
+    toaddrs: ["admin@example.com"]
+    subject: "🚨 Cardwise Critical Error Alert!"
+    credentials: ["smtp_user", "smtp_password"]
+    secure: []
+
+loggers:
+  ingestion:
+    level: INFO
+    handlers: [console, file, error_file, smtp]
+    propagate: False
