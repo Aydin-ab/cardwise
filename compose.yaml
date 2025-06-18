@@ -1,25 +1,50 @@
 services:
-  dev:
+  backend:
     build:
       context: .
-      target: development
-    # volumes + command here to copy the src folder and edit it in the container without
-    # modifying the local src folder
+      dockerfile: Dockerfile.backend
+    ports:
+      - "10000:10000"
+    env_file:
+      - .env.backend
+    command: backend.app.main:app --host 0.0.0.0 --port 10000
     volumes:
-      - .:/cache:ro
-    command: bash -c "cp -r /cache/src /app/src && poetry install --only-root && tail -f /dev/null"
+      - ./cardwise:/app/cardwise
+      - ./backend:/app/backend
+    networks:
+      - cardwise-net
+
+  cli:
+    build:
+      context: .
+      dockerfile: Dockerfile.cli
+    env_file:
+      - .env.cli
+    environment:
+      - BACKEND_API_URL=http://backend:10000
+    stdin_open: true      # Allow interactive mode
     tty: true
-    stdin_open: true
-
-  test:
-    build:
-      context: .
-      target: test
     volumes:
-      - ./tests:/app/tests:ro
+      - ./cli:/app/cli
+      - ./cardwise:/app/cardwise
+      - ./ingestion:/app/ingestion
+    networks:
+      - cardwise-net
+    entrypoint: /bin/bash
 
-
-  prod:
+  ingestion:
     build:
       context: .
-      target: production
+      dockerfile: Dockerfile.ingestion
+    env_file:
+      - .env.ingestion
+    stdin_open: true
+    tty: true
+    entrypoint: /bin/bash
+    volumes:
+      - ./cardwise:/app/cardwise
+      - ./ingestion:/app/ingestion
+
+networks:
+  cardwise-net:
+    driver: bridge
