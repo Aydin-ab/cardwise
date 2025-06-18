@@ -6,6 +6,7 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile.backend
     autoDeploy: true
+    healthCheckPath: /health
     buildFilter: # Watch for changes only in these paths to trigger a new build
       paths:
         - backend/**
