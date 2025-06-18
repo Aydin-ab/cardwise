@@ -4,7 +4,7 @@ import '../models/offer.dart';
 
 class OfferApiService {
   // Use emulator-friendly localhost address
-  final String baseUrl = "https://cardwise-backend-api.onrender.com";
+  final String baseUrl = "https://cardwise-backend-latest.onrender.com";
 
   Future<List<Offer>> searchOffers(String shopName) async {
     final response = await http.get(
