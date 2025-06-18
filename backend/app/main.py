@@ -5,7 +5,7 @@ import toml
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.app.api.offers import router as offers_router
+from backend.app.api import health, offers
 from backend.app.core.logging_config import setup_logging
 
 setup_logging()
@@ -34,6 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(offers_router, prefix="/offers", tags=["Offers"])
+app.include_router(offers.router, prefix="/offers", tags=["Offers"])
+app.include_router(health.router)
 
 logger.info("✅ Cardwise API is ready.")
