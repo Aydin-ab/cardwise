@@ -1,0 +1,14 @@
+name: Keep Backend Warm
+
+on:
+  schedule:
+    - cron: '*/12 8-23 * * *'  # Every 12 minutes from 08:00 to 23:59 UTC
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" https://cardwise-backend-api.onrender.com/ping
