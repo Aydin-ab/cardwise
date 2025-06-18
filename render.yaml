@@ -1,11 +1,18 @@
 services:
   - type: web
     name: cardwise-backend
-    env: docker
+    runtime: docker
     plan: free
     region: oregon
     dockerfilePath: ./Dockerfile.backend
     autoDeploy: true
+    buildFilter: # Watch for changes only in these paths to trigger a new build
+      paths:
+        - backend/**
+        - cardwise/**
+        - pyproject.toml
+        - poetry.lock
+        - render.yaml
     envVars:
       - key: DATABASE_URL
         sync: false     # keep this one set from the dashboard
