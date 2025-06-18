@@ -1,12 +1,10 @@
-# cli/main.py
 import typer
 
-from cli.commands.ingest import ingest_command
-from cli.commands.search import search_command
+from cli.commands import ingest, search
 
 app = typer.Typer()
-app.add_typer(ingest_command, name="ingest")
-app.add_typer(search_command, name="search")
+ingest.register(app)
+search.register(app)
 
 if __name__ == "__main__":
     app()

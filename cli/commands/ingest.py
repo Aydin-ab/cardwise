@@ -3,10 +3,11 @@ import typer
 
 from ingestion.main import main as ingestion_main
 
-ingest_command = typer.Typer()
+app = typer.Typer()
 
 
-@ingest_command.command()
-def run():
-    """Ingest all HTML offers and populate the database."""
-    ingestion_main()
+def register(app: typer.Typer):
+    @app.command()
+    def ingest():  # type: ignore
+        """Ingest all HTML offers and populate the database."""
+        ingestion_main()
