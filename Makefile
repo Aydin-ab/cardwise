@@ -1,55 +1,55 @@
-.PHONY: reset all install update test pre-commit-setup commit tox
+.PHONY: all install update test lint type tox pre-commit-setup commit reset dev dockerhub-push flutter backend ingestion
 
-
-# 🔥 Default: Install or update dependencies, setup pre-commit, and run tests
+# 🧪 ========== DEFAULT ==========
 all: install pre-commit-setup test
 
-# 🚀 Install Poetry Environment (if not already installed)
+# 📦 ========== DEPENDENCIES ==========
 install:
-	pip install poetry  # Ensure Poetry is installed
-	poetry install # Install dependencies using lock file (or create one if missing)
+	@echo "📦 Installing dependencies..."
+	pip install poetry
+	poetry install
 
-# 🔄 Update dependencies (Poetry) without wiping everything
 update:
 	@echo "🔄 Updating dependencies..."
-	pip install --upgrade poetry  # Upgrade Poetry
-	poetry update  # Update dependencies and lock file + reinstall
-	poetry install --only-root  # Reinstall root
+	pip install --upgrade poetry
+	poetry update
+	poetry install --only-root
 	@echo "✅ Dependencies updated!"
 
-# ✅ Run Tests (Supports -html flag for Coverage Report)
+reset:
+	@echo "🔥 Resetting everything..."
+	rm -rf poetry.lock .venv
+	poetry env remove --all || true
+	@echo "✅ Environment reset complete!"
+	$(MAKE) all
+
+# ✅ ========== TESTING & QUALITY ==========
 test:
-	@echo "🔬 Running tests..."
-	poetry run pytest --cov=src --cov-report=term-missing; \
+	@echo "🧪 Running tests..."
+	poetry run pytest --cov=src --cov-report=term-missing
 
 lint:
+	@echo "🧹 Running linter..."
 	poetry run ruff check .
-	poetry run ruff format . 
+	poetry run ruff format .
 
 type:
-	poetry run pyright 
+	@echo "🔍 Running type checks..."
+	poetry run pyright
 
-# Add command that runs tox to test multiple Python versions
 tox:
-	@echo "🔬 Running tests with Tox..."
+	@echo "🔬 Running multi-version tests with Tox..."
 	poetry run tox -p
-	@echo "✅ Tox tests completed!"
+	@echo "✅ Tox complete!"
 
-fastapi:
-	@echo "🚀 Starting FastAPI server..."
-	poetry run uvicorn backend.app.main:app --reload
-
-flutter:
-	@echo "🚀 Starting Flutter app..."
-	cd frontend/mobile_app && flutter run -d emulator-5554
-
-# ⚡ Install & Update Pre-commit Hooks
+# 🔐 ========== GIT & PRE-COMMIT ==========
 pre-commit-setup:
+	@echo "🔐 Setting up pre-commit hooks..."
 	poetry run pre-commit autoupdate
 	poetry run pre-commit install
 
-# 🏗️ Commit & Push with Pre-commit Check
 commit:
+	@echo "📤 Committing with pre-commit checks..."
 	- poetry run pre-commit run --all-files
 	git add .
 	@if [ -z "$(m)" ]; then \
@@ -60,14 +60,42 @@ commit:
 	git commit -m "$$msg"; \
 	git push
 
+# 🐳 ========== DOCKER ==========
+DOCKERHUB_USERNAME := aydinabiar
+TAG := latest
+PLATFORM_AMD64 ?= false  # Set to true to add --platform=linux/amd64
 
-# 🔄 Reset Everything: Remove all generated files, delete Conda environment, and reinstall from scratch
-reset:
-	@echo "🔥 Resetting everything..."
-	rm -rf poetry.lock .venv
-	# Remove the current environment
-	poetry env remove $(which python)
-	@echo "🔥 Removing Poetry environment..."
-	poetry env remove --all
-	@echo "✅ Environment fully wiped! Reinstalling everything..."
-	$(MAKE) all
+dockerhub-push:
+	@echo "🐳 Building Docker image..."
+	@if [ "$(PLATFORM_AMD64)" = "true" ]; then \
+		echo "🔧 Using platform linux/amd64"; \
+		docker build --platform=linux/amd64 -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) .; \
+	else \
+		docker build -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) .; \
+	fi
+	@echo "🏷️  Tagging image as $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG)..."
+	docker tag $(IMAGE_NAME):$(TAG) $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG)
+	@echo "📤 Pushing image to Docker Hub..."
+	docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG)
+	@echo "✅ Pushed $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG) successfully!"
+
+dev:
+	@echo "🧰 Starting dev containers and attaching to CLI..."
+	docker compose up -d --build
+	docker compose exec cli bash
+
+# 📱 ========== FLUTTER ==========
+flutter:
+	@echo "🚀 Launching Flutter app..."
+	cd frontend/mobile_app && flutter run -d emulator-5554
+
+# 🐍 ========== BACKEND ==========
+PORT ?= 10000
+backend:
+	@echo "🚀 Starting FastAPI backend on http://localhost:$(PORT) ..."
+	poetry run uvicorn backend.app.main:app --host 0.0.0.0 --port $(PORT) --reload
+
+# 🐍 ========== Ingestion ==========
+ingestion:
+	@echo "🚀 Running ingestion script"
+	poetry run python ingestion/main.py
