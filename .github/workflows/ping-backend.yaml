@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Ping backend
         run: |
-          curl -s -o /dev/null -w "%{http_code}" https://cardwise-backend-api.onrender.com/ping
+          curl -s -o /dev/null -w "%{http_code}" hhttps://cardwise-backend-latest.onrender.com/ping
