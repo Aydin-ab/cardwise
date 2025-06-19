@@ -93,6 +93,7 @@ Cross-platform mobile app built with Flutter, designed for:
 
 Note: Currently tested only on Android (because that's my phone !), but Flutter ensures iOS compatibility.
 
+* Follow [Flutter's official guide](https://docs.flutter.dev/deployment/android) to deploy on the Google Play Store
 ---
 
 ### CLI
