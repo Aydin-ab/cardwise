@@ -1,236 +1,187 @@
-# Contributing to Cardwise
+# 🧩 Contributing to Cardwise
 
 Welcome, and thank you for considering contributing to **Cardwise**!  
-We appreciate all kinds of contributions — from bug reports and suggestions to code and documentation improvements.
+We appreciate all contributions — from bug reports and suggestions to code, tests, and documentation.
 
 ---
 
-## 🛠️ Getting Started
+## ⚙️ Getting Started
 
 1. **Clone the repository**:
-   ```bash
+
+```bash
    git clone https://github.com/aydin-ab/cardwise.git
    cd cardwise
-    ```
-    
-2. **Run make** to install dependencies on a poetry virtual env, install pre-commit, and run the tests:
-   ```bash
+```
+
+2. **Install dependencies, set up pre-commit, and run tests**:
+
+```bash
    make
-   ```
+```
 
-Or you can do it manually:
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/aydin-ab/cardwise.git
-   cd cardwise
-    ```
-
-2. **Install dependencies** with [Poetry](https://python-poetry.org/docs/#installation):
-
-   ```bash
-   poetry install
-   ```
-
-3. **Run the app (optional)**:
-
-    You can test the app with:
-    ```bash
-    poetry run search_offers -h
-    ```
-
-    You can run a dev docker container via Docker:
-
-   ```bash
-   docker compose up dev
-   ```
-
-   You also have a `.devcontainer/` snippet folder if you prefer using dev containers
-
-   Remember to populate `htmls/` with your own data if you want to use the default parameters of `search_offers`
+This will install a Poetry virtual environment, setup pre-commit hooks, and verify the codebase is working.
 
 ---
 
 ## 🔨 Improving the App
-### Adding a New Bank Parser
-If adding a bank, please follow these steps:
-1. Add the bank HTML parser to `src/cardwise/infrastructure/parsers/{new_bank}_offer_parser.py`
-2. Write a test for the new bank parser in `tests/parsers/test_{new_bank}_offer_parser.py`
-3. Add the bank HTML path as additional argument to the CLI `src/cardwise/cli/main.py`
-4. Write a test for the new HTML path argument in `tests/test_cli.py`
 
+### ➕ Adding a New Bank Parser
 
-### TODO List
-It would be ideal to have an automatic way to query the banks HTMLs and parse them.
-I've tried writing web scrapers with selenium but they always get blocked by the bank's security.
-If you have any ideas on how to do this, please let me know!
-Until then, we can only download the HTMLs manually and store them in the `htmls/` folder.
+If you'd like to support a new bank, follow these steps:
+
+1. Add a parser in `ingestion/parsers/{new_bank}.py`
+2. Write tests in `tests/ingestion/test_{new_bank}.py`
+3. Upload the corresponding HTML file to the GCS bucket at:
+   `{bucket_name}/data/bank_htmls/{new_bank}.html`
+
+Use the `normalize_string()` utility to derive the correct filename from the bank name:
+
+```py3
+# cardwise/domain/utils.py
+
+def normalize_string(s: str) -> str:
+    s_ = "".join([c.lower() for c in s if c.isalnum() or c == " "])
+    return s_.strip().replace(" ", "_")
+```
+
+Examples:
+
+* "Bank of America" → `bank_of_america`
+* "Chase" → `chase`
+* "Capital One" → `capital_one`
+
+> This lets us dynamically match parsers and HTML files without hardcoding logic.
+
+---
+
+### 📌 TODO: Automate Offer Retrieval
+
+We would love to **automate fetching HTML offers** from banks.
+Attempts using Selenium and Puppeteer have failed due to strict security from the banks. API access is also not available (need an expensive business license).
+
+If you have ideas for overcoming this, [open a discussion](https://github.com/aydin-ab/cardwise/discussions) or submit a proposal!
 
 ---
 
 ## 🧪 Running Tests
 
-We use [pytest](https://docs.pytest.org/en/stable/getting-started.html) for testing and [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/readme.html) for coverage reports.
+We use:
+* [`pytest`](https://docs.pytest.org/) for test execution
+* [`pytest-cov`](https://pytest-cov.readthedocs.io/) for code coverage
 
-Run tests locally:
-Using make:
+Run tests:
+
 ```bash
 make test
 ```
-Or using Poetry:
 
-```bash
-poetry run pytest --cov=src --cov-report=term-missing
-```
-
-Or using Docker:
-
-```bash
-docker compose up test
-```
-
-Or using Tox (Python 3.10 only):
-```bash
-poetry run tox -e py310
-```
-
-Code coverage is collected via pytest-cov. Please write meaningful tests for new features and bug fixes.
-
+✅ Write meaningful tests for all features and bug fixes.
 
 ---
 
-## ✅ **Linting & Formatting with Ruff**
+## 🧹 Linting & Formatting
 
-We use [Ruff](https://docs.astral.sh/ruff/installation/) for:
+We use [`ruff`](https://docs.astral.sh/ruff/) for:
+* Code linting
+* Auto-formatting (like Black)
+* Import sorting (like isort)
+* Basic security checks (like Bandit)
 
-* **Linting**
-* **Code formatting** (~Black)
-* **Import sorting** (~isort)
-* **Security checks** (~Bandit rules)
-
-Run checks with make:
+Run all formatting checks:
 
 ```bash
 make lint
 ```
 
-Run checks manually:
-
-```bash
-poetry run ruff check .       # lint
-poetry run ruff format .      # auto-format
-```
-
-Or via Tox:
-
-```bash
-poetry run tox -e lint
-```
-
 ---
 
-## 🔍 **Static Type Checking with Pyright**
+## 🧠 Type Checking
 
-We use [Pyright](https://github.com/microsoft/pyright) with `strict` mode enabled to catch type issues early.
+We use [`pyright`](https://github.com/microsoft/pyright) in `strict` mode.
 
-Run type checking with make:
+Run type checks:
+
 ```bash
 make type
 ```
 
-Or Run type checking manually:
-
-```bash
-poetry run pyright
-```
-
-Or via Tox:
-
-```bash
-poetry run tox -e type
-```
-
 ---
 
-## 🧪 **Multi-Python Compatibility with Tox**
+## 🧪 Tox for Multi-Python Support
 
-To ensure compatibility across Python 3.9–3.13, we use [Tox](https://tox.readthedocs.io/) to verify our code builds against multiple Python versions.
+We test against Python 3.10–3.13 using [`tox`](https://tox.readthedocs.io/).
 
-Run tox with make:
+To run:
+
 ```bash
 make tox
 ```
 
-Or run tox manually:
-
-```bash
-poetry run tox                  # run all environments
-poetry run tox -p               # run in parallel
-poetry run tox -e py310         # run tests with Python 3.10
-```
-
-> Note: Full test suite runs only on Python 3.10 to save time.
-> Note: Tox is configured to use `pyenv` for Python versions. Ensure you have the required versions installed.
+> ✅ Note: The full suite runs only on 3.10 by default for speed.
+> 🛠️ Make sure required versions are installed via `pyenv`.
 
 ---
 
-## 📝 Commit Messages
+## ✅ Commit Messages
 
-Please use [Conventional Commits](https://www.conventionalcommits.org/) with one of the following types:
+We follow [**Conventional Commits**](https://www.conventionalcommits.org/):
 
 * `feat`: new feature
 * `fix`: bug fix
-* `docs`: documentation change
-* `test`: adding or updating tests
-* `chore`: maintenance tasks (e.g. formatting, configs)
-* `build`: changes that affect the build system or external dependencies
-* `ci`: changes to CI configuration files and scripts
+* `docs`: docs only
+* `test`: add or update tests
+* `chore`: cleanup/config updates
+* `build`: dependency or build changes
+* `ci`: GitHub Actions or CI pipeline changes
 * `perf`: performance improvements
-* `refactor`: code changes that neither fix a bug nor add a feature
-* `style`: formatting, missing semi-colons, etc; no code change
-* `revert`: revert a previous commit
-* `BREAKING CHANGE`: a commit that introduces breaking changes (place this at the end of the commit message body)
-    * (or) `!`: a commit that introduces breaking changes (place this at the end of the commit message header)
+* `refactor`: code cleanup with no behavior change
+* `style`: whitespace, formatting, etc.
+* `revert`: revert previous commit
+
+For breaking changes:
+
+```bash
+feat!: change signature of OfferParser interface
+```
+
+Or add `BREAKING CHANGE:` in the commit body.
 
 ---
 
-#### 🔄 **Pre-commit Hooks**
+## 🔄 Pre-commit Hooks
 
-Cardwise supports [**pre-commit**](https://pre-commit.com/) to catch linting and formatting issues before you commit.
+We use [**pre-commit**](https://pre-commit.com/) to catch issues before you commit.
 
-To install the hook:
+Install hooks:
 
 ```bash
 make pre-commit-setup
 ```
 
-Or run it manually:
-
-```bash
-poetry run pre-commit autoupdate
-poetry run pre-commit install
-```
-
-Then it runs automatically on each commit. You can also run it manually:
-
-```bash
-poetry run pre-commit run --all-files
-```
+Hooks run automatically on `git commit`.
 
 ---
 
+## 🚀 Making a Pull Request
 
-## 🚀 Making a PR
+1. **Fork** the repo
 
-1. Fork the repo
-2. Create a feature branch:
+2. **Create a branch**:
 
-   ```bash
-   git checkout -b feat/my-new-feature
-   ```
-3. Make your changes
-4. Run tests and format your code
-5. Open a pull request!
+```bash
+   git checkout -b feat/add-citi-parser
+```
+
+3. **Make your changes**
+
+4. **Run tests & linters**
+
+5. **Open a pull request**
+
+I’ll review it as soon as possible!
 
 ---
 
-Thanks for helping make Cardwise better 💜
+Thanks for helping make **Cardwise** better 💜
+Feel free to [open issues](https://github.com/aydin-ab/cardwise/issues) or [start discussions](https://github.com/aydin-ab/cardwise/discussions) if you have ideas or questions.

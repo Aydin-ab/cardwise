@@ -8,154 +8,211 @@
 
 ## 🚀 Features
 
-- 📊 Optimal matching of purchases to your credit cards, based on your bank's current deals and your cards point system
-- 💳 Support for multiple credit cards (WIP)
-- 🏷️ Support for multiple couponing systems (shop-specific, ibotta etc) (WIP)
-- 🔍 Search for offers and cashback deals (WIP)
-- 📈 Track your cashback and points balance per card (WIP)
+- 📊 Optimal card matching based on current bank offers and your card's reward system
+- 💳 Support for multiple banks
+- 🔍 Search for offers and cashback deals
+- 🏷️ Support for couponing platforms (e.g., Ibotta, shop-specific) _(WIP)_
+- 📈 Track cashback and points balances per card _(WIP)_
 
 ---
 
 ## 📦 Installation
 
-Cardwise requires **Python 3.9+**.
-
-1. **Clone the repository**:
-   ```bash
+1. **Clone the repository:**
+```bash
    git clone https://github.com/aydin-ab/cardwise.git
    cd cardwise
-    ```
-    
-2. **Run make** to install dependencies on a poetry virtual env, install pre-commit, and run the tests:
-   ```bash
+```
+
+2. **Install dependencies, run tests, and configure pre-commit:**
+
+```bash
    make
-   ```
+```
 
-Or you can do it manually:
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/aydin-ab/cardwise.git
-   cd cardwise
-    ```
-
-2. **Install dependencies** with [Poetry](https://python-poetry.org/docs/#installation):
-
-   ```bash
-   poetry install
-   ```
-
-3. **Verify installation (optional)**:
-
-    You can verify the installation with:
-    ```bash
-    poetry run search_offers -h
-    ```
-
-    You can run a prod docker container via Docker:
-
-   ```bash
-   docker compose up prod
-   ```
-
-   You also have a `.devcontainer/` snippet folder if you prefer using dev containers
-
-   Remember to populate `htmls/` with your own data if you want to use the default parameters of `search_offers`
-
+3. *Optional*: You can use the `.devcontainer/` snippet to spin up a dev container.
 
 ---
 
-## Usage
-### Search for offers
-```bash
->> poetry run search_offers -h
+## 🧠 System Design Overview
 
-usage: search_offer "starbucks" "mcdonalds" [--save results.json] [--bofa-html path.html] [--capone-html path.html] [--chase-html path.html] [-v | -vv | -vvv] [--log-level INFO] [--enable-email-logs]
+### Ingestion
 
-Find the best offers for one or more companies.
+**Components:** GCS Bucket · Postgres · Supabase · GitHub Actions
 
-positional arguments:
-  queries               Company names to search for
+Cardwise fetches bank offers (e.g., cashback, points, perks) by parsing manually uploaded HTML files stored in a GCS bucket. Since APIs are gated and scraping is disallowed, ingestion is manual for now.
 
-options:
-  -h, --help            show this help message and exit
-  -s [SAVE], --save [SAVE]
-                        Save results to a JSON file (default: results.json)
-  --bofa-html BOFA_HTML
-                        Custom HTML file for Bank of America
-  --capone-html CAPONE_HTML
-                        Custom HTML file for Capital One
-  --chase-html CHASE_HTML
-                        Custom HTML file for Chase
-  -v, --verbose         Increase verbosity (-v, -vv, -vvv)
-  --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
-                        Manually set log level
-  --enable-email-logs   Enable SMTP logging for critical errors
+Each run:
+  * Flushes the DB
+  * Parses HTML into `Offer` objects
+  * Stores new offers in Postgres (hosted on Supabase)
+  * A GitHub Actions cron job runs ingestion **monthly** (aligned with most bank offer cycles).
+
+Configure it via `.env.ingestion` (see `.env.ingestion.example`):
+
+```env
+GCS_CREDENTIALS=ingestion/gcs/ingestion-bot-key.json
+GCS_BUCKET_NAME=cardwise-01012025-bucket
+DATABASE_URL=postgresql://...
+LOG_LEVEL=INFO
 ```
 
-Default HTML files are provided for Bank of America, Capital One, and Chase in the `htmls/` directory. You can use these paths or provide your own custom HTML files to the appropriate arguments.
+---
 
-### Example with default params
-```bash
-poetry run search_offers "starbucks" "mcdonalds"
-```
-This will search for offers from Starbucks and McDonald's, save the results to `results.json`, and use default HTML files for Bank of America, Capital One, and Chase located in the `htmls/` directory.
+### Backend
 
-### Example with Custom HTML Files
-```bash
-poetry run search_offers "starbucks" "mcdonalds" --save results.json --bofa-html path/to/bofa.html --capone-html path/to/capital_one.html --chase-html path/to/chase.html
-```
-This will search for offers from Starbucks and McDonald's, save the results to `results.json`, and use custom HTML files for Bank of America, Capital One, and Chase.
+**Components:** FastAPI · Postgres · Render · cron-job.org
 
-### Example with Docker (WIP)
-```bash
-docker compose run --rm prod "starbucks" "mcdonalds" 
+The backend exposes offer search via a FastAPI app, using fuzzy matching for partial or misspelled shop names.
+
+* Hosted on [Render](https://render.com). See [render.yaml](render.yaml) for deployment config.
+* Kept warm using [cron-job.org](https://cron-job.org) (free plan otherwise sleeps after 15 mins)
+
+Docs:
+* [Swagger UI](https://cardwise-backend-latest.onrender.com/docs)
+* [ReDoc](https://cardwise-backend-latest.onrender.com/redoc)
+
+`.env.backend` example:
+
+```env
+DATABASE_URL=postgresql://...
+DEBUG=True
+LOG_LEVEL=INFO
 ```
-This will search for offers from Starbucks and McDonald's, save the results to `results.json`, and query HTML files for Bank of America, Capital One, and Chase from a database.
+
+---
+
+### Frontend
+
+**Components:** Flutter · Dart · Android Studio
+
+Cross-platform mobile app built with Flutter, designed for:
+* Browsing matching offers for your purchases
+* Search by shop name
+* View all offers
+
+Note: Currently tested only on Android (because that's my phone !), but Flutter ensures iOS compatibility.
+
+---
+
+### CLI
+
+**Components:** Typer
+
+The CLI offers:
+* 🔍 **Search**: Query offers from the backend
+* 🛠️ **Ingest**: Run the HTML-to-DB pipeline from GCS
+
+Example `.env.cli`:
+
+```env
+BACKEND_API_URL=http://localhost:10000
+GCS_CREDENTIALS=ingestion/gcs/ingestion-bot-key.json
+GCS_BUCKET_NAME=cardwise-01012025-bucket
+DATABASE_URL=postgresql://...
+LOG_LEVEL=INFO
+```
+
+#### 🔎 Search for Offers
+
+```bash
+cardwise search adidas "shake shack"
+```
+
+✅ Fuzzy matching: `starbuck`, `starbuck's`, or `starbucks` — all work!
+
+Sample output:
+
+```bash
+>> cardwise search adidas "shake shack"
+
+🔍 Searching for: ['adidas', 'shake shak']
+[Bank of America] Shake Shack: CASHBACK - 10% (no expiry date found)
+[Capital One] adidas: POINTS - Up to 16X miles (no expiry date found)
+[Chase] Shake Shack: CASHBACK - 10% cash back (no expiry date found)
+```
+
+#### 🧃 Ingest HTML Offers
+
+```bash
+cardwise ingest
+```
+
+Sample output:
+
+```bash
+>> cardwise ingest
+
+2025-06-18 22:10:49 [INFO] offer_ingestion_pipeline.py:32 in run — 📝 Parsing html docs: bank_of_america using BankOfAmericaOfferParser
+2025-06-18 22:10:50 [INFO] offer_ingestion_pipeline.py:34 in run — ✅ Parsed 40 offer(s) from bank_of_america
+2025-06-18 22:10:50 [INFO] offer_ingestion_pipeline.py:32 in run — 📝 Parsing html docs: capital_one using CapitalOneOfferParser
+2025-06-18 22:10:50 [INFO] offer_ingestion_pipeline.py:34 in run — ✅ Parsed 3557 offer(s) from capital_one
+2025-06-18 22:10:50 [INFO] offer_ingestion_pipeline.py:32 in run — 📝 Parsing html docs: chase using ChaseOfferParser
+2025-06-18 22:10:50 [INFO] offer_ingestion_pipeline.py:34 in run — ✅ Parsed 116 offer(s) from chase
+2025-06-18 22:10:50 [INFO] offer_ingestion_pipeline.py:37 in run — 📦 Inserting 3713 offer(s) into the database...
+2025-06-18 22:10:50 [INFO] repository.py:20 in delete_all — Deleting all existing offers from the database...
+2025-06-18 22:10:51 [INFO] repository.py:23 in delete_all — All offers deleted.
+2025-06-18 22:10:51 [INFO] repository.py:33 in insert_many — Inserting 3713 offer(s) into the database...
+2025-06-18 22:10:51 [INFO] repository.py:37 in insert_many — Insert complete.
+2025-06-18 22:10:51 [INFO] offer_ingestion_pipeline.py:41 in run — 🎉 Ingestion pipeline complete.
+```
+
+---
+
+### 🐳 Docker Dev Example
+
+```bash
+make docker-dev
+```
+
+This starts the backend in a container and opens a shell to a CLI container ready to query or ingest.
 
 ---
 
 ## 🧪 Testing & Quality
 
-Cardwise uses modern tooling to ensure high code quality.
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+Cardwise uses modern tools for code quality:
+
+* `pytest` for testing
+* `ruff` for linting & formatting
+* `pyright` for static typing
+* `pre-commit` for hooks
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup.
 
 ---
 
 ## 🗂️ Directory Structure
 
-```
+```txt
 cardwise/
-├── src/cardwise/        # Source code
-├── src/cardwise/bank_parser/  # Bank parsers
-├── src/cardwise/bank_parser/{bank}.py  # specific bank parser
-├── src/cardwise/bank_parser/exceptions.py  # generic exceptions
-├── src/cardwise/bank_parser/logger.py  # logger
-├── src/cardwise/bank_parser/search_offers.py  # entry point script to search for offers
-├── src/cardwise/utils/ # Utility functions
-├── tests/               # Test suite
+├── backend/         # FastAPI backend server
+├── cardwise/        # Core business logic
+├── cli/             # Typer CLI
+├── ingestion/       # HTML-to-DB ingestion
+├── frontend/        # Flutter mobile app
+├── tests/           # Unit and integration tests
 ```
-
-
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions!
+Contributions are welcome! ✨
 
-* Read our [CONTRIBUTING.md](CONTRIBUTING.md)
-* Use [Conventional Commits](https://www.conventionalcommits.org/)
+* Read [CONTRIBUTING.md](CONTRIBUTING.md)
+* Follow [Conventional Commits](https://www.conventionalcommits.org)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+Licensed under the **MIT License**. See the [LICENSE](LICENSE) file.
 
 ---
 
 ## 🧠 Author
 
-**Aydin Abiar** – [@aydinabiar](https://github.com/Aydin-ab)
-Feel free to open an issue or discussion to ask questions or share feedback!
-
+**Aydin Abiar**
+GitHub: [@aydinabiar](https://github.com/aydin-ab)
+Feel free to open an issue, suggest improvements, or share feedback!
