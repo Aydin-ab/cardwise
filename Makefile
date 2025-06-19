@@ -1,4 +1,4 @@
-.PHONY: all install update test lint type tox pre-commit-setup commit reset docker-dev dockerhub-push dockerhub-push-all flutter backend ingestion
+.PHONY: all install update test lint type tox pre-commit-setup commit reset docker-dev dockerhub-push dockerhub-push-all flutter backend ingestion flutter-release
 
 # 🧪 ========== DEFAULT ==========
 all: install pre-commit-setup test
@@ -106,3 +106,10 @@ backend:
 ingestion:
 	@echo "🚀 Running ingestion script"
 	poetry run python ingestion/main.py
+
+# 📱 ========== Flutter Release ==========
+# See docs https://docs.flutter.dev/deployment/android
+flutter-release:
+	@echo "🚀 Building Flutter release..."
+	cd frontend/cardwise && flutter clean && flutter build apk --release && flutter build appbundle --release
+	@echo "✅ Flutter release built successfully!"
