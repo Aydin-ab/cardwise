@@ -19,7 +19,3 @@ def discover_parsers() -> list[BankOfferParser]:
                 if inspect.isclass(obj) and issubclass(obj, BankOfferParser) and obj is not BankOfferParser:
                     parsers.append(obj())
     return parsers
-
-
-test = discover_parsers()
-a = 0
