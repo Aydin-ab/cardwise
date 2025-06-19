@@ -2,7 +2,6 @@
 
 **Cardwise** helps you choose the best credit card for your purchases by evaluating rewards, cashback, or travel perks in real-time.
 
-
 > ✨ Designed for couponers, travel hackers, and anyone looking to optimize their credit card usage.
 
 ---
