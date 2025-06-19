@@ -1,4 +1,4 @@
-.PHONY: all install update test lint type tox pre-commit-setup commit reset docker-dev dockerhub-push flutter backend ingestion
+.PHONY: all install update test lint type tox pre-commit-setup commit reset docker-dev dockerhub-push dockerhub-push-all flutter backend ingestion
 
 # 🧪 ========== DEFAULT ==========
 all: install pre-commit-setup test
@@ -78,6 +78,13 @@ dockerhub-push:
 	@echo "📤 Pushing image to Docker Hub..."
 	docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG)
 	@echo "✅ Pushed $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG) successfully!"
+
+dockerhub-push-all:
+	@$(MAKE) dockerhub-push DOCKERFILE=Dockerfile.backend IMAGE_NAME=cardwise-backend
+	@$(MAKE) dockerhub-push DOCKERFILE=Dockerfile.backend IMAGE_NAME=cardwise-backend-render PLATFORM_AMD64=true
+	@$(MAKE) dockerhub-push DOCKERFILE=Dockerfile.cli IMAGE_NAME=cardwise-cli
+	@$(MAKE) dockerhub-push DOCKERFILE=Dockerfile.ingestion IMAGE_NAME=cardwise-ingestion
+
 
 docker-dev:
 	@echo "🧰 Starting dev containers and attaching to CLI..."
