@@ -31,19 +31,8 @@ handlers:
     maxBytes: 2000000  # 2 MB
     backupCount: 2
 
-  smtp:
-    class: logging.handlers.SMTPHandler
-    level: CRITICAL
-    formatter: file_formatter
-    mailhost: ["smtp.example.com", 587]
-    fromaddr: "alerts@example.com"
-    toaddrs: ["admin@example.com"]
-    subject: "🚨 Cardwise Critical Error Alert!"
-    credentials: ["smtp_user", "smtp_password"]
-    secure: []
-
 loggers:
   backend:
     level: INFO
-    handlers: [console, file, error_file, smtp]
+    handlers: [console, file, error_file]
     propagate: False
