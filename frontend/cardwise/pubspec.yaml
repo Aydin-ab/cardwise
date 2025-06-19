@@ -1,5 +1,5 @@
 name: cardwise
-description: "A new Flutter project."
+description: "Cardwise helps you choose the best credit card for your purchases by evaluating rewards, cashback, or travel perks in real-time"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -60,7 +60,7 @@ flutter_launcher_icons:
   android: true
   ios: false
   image_path: "assets/icon.png"
-  
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
