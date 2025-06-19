@@ -1,4 +1,4 @@
-.PHONY: all install update test lint type tox pre-commit-setup commit reset dev dockerhub-push flutter backend ingestion
+.PHONY: all install update test lint type tox pre-commit-setup commit reset docker-dev dockerhub-push flutter backend ingestion
 
 # 🧪 ========== DEFAULT ==========
 all: install pre-commit-setup test
@@ -7,7 +7,7 @@ all: install pre-commit-setup test
 install:
 	@echo "📦 Installing dependencies..."
 	pip install poetry
-	poetry install
+	poetry install --all-groups
 
 update:
 	@echo "🔄 Updating dependencies..."
@@ -79,7 +79,7 @@ dockerhub-push:
 	docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG)
 	@echo "✅ Pushed $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(TAG) successfully!"
 
-dev:
+docker-dev:
 	@echo "🧰 Starting dev containers and attaching to CLI..."
 	docker compose up -d --build
 	docker compose exec cli bash
