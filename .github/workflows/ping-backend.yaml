@@ -2,7 +2,8 @@ name: Keep Backend Warm
 
 on:
   schedule:
-    - cron: '*/12 15-23,0-6 * * *'  # Every 12 minutes from 15:00 to 7:59 next day UTC (= 8:00 to 23:59 PT) 
+    - cron: '*/1 15-23 * * *'  # Every 12 minutes from 15:00 to 7:59 next day UTC (= 8:00 to 23:59 PT) 
+    - cron: '*/1 0-6 * * *'    # 12AM–8AM PT (00:00–07:59 UTC)
   workflow_dispatch:
 
 jobs:
