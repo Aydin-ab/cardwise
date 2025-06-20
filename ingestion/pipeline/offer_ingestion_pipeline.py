@@ -6,7 +6,7 @@ from typing import List
 from cardwise.domain.models.offer import Offer
 from ingestion.parser_registry import discover_parsers
 from ingestion.persistence.repository import OfferRepository
-from ingestion.pipeline.file_loader import load_offer_docs
+from ingestion.pipeline.load_htmls import load_htmls
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class OfferIngestionPipeline:
 
     def run(self) -> List[Offer]:
         logger.info("🔄 Running ingestion pipeline...")
-        offer_docs = load_offer_docs()
+        offer_docs = load_htmls()
         parser_map = {parser.bank.id: parser for parser in self.parsers}
 
         offers: List[Offer] = []
@@ -34,7 +34,7 @@ class OfferIngestionPipeline:
             logger.info(f"✅ Parsed {len(parsed)} offer(s) from {bank_id}")
             offers.extend(parsed)
 
-        logger.info(f"📦 Inserting {len(offers)} offer(s) into the database...")
+        logger.info(f"📦 Going to insert {len(offers)} offer(s) into the database...")
         self.repository.delete_all()
         self.repository.insert_many(offers)
 

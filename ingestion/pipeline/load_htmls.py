@@ -6,7 +6,7 @@ from ingestion.gcs.gcs_client import GCSClient
 logger = logging.getLogger(__name__)
 
 
-def load_offer_docs() -> List[Tuple[str, str]]:
+def load_htmls() -> List[Tuple[str, str]]:
     """
     Load HTML files from a private GCS bucket.
     Returns:

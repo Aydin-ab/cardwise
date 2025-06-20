@@ -18,5 +18,5 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
           LOG_LEVEL: INFO
-        run: poetry run python ingestion/main.py
+        run: poetry run python -c "from ingestion.main import main; main(upload=True)"
       

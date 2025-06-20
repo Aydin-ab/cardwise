@@ -19,7 +19,10 @@ class GCSClient:
     def list_html_files(self, prefix: str = "data/bank_htmls/") -> List[str]:
         blobs = self.client.list_blobs(self.bucket, prefix=prefix)  # type: ignore
         html_files: List[str] = [blob.name for blob in blobs if blob.name.endswith(".html")]  # type: ignore
-        logger.info(f"Found {len(html_files)} HTML files in GCS under '{prefix}': {html_files}")
+        logger.info(
+            f"Found {len(html_files)} HTML files in GCS bucket {self.bucket.name} "  # type: ignore
+            f"under '{prefix}': {html_files}"
+        )
         return html_files
 
     def download_file_content(self, file_path: str) -> str:
@@ -27,3 +30,10 @@ class GCSClient:
         logger.debug(f"Downloading HTML file content: {file_path}")
         html_doc: str = blob.download_as_text()  # type: ignore
         return html_doc
+
+    def upload_file(self, file_path: str) -> None:
+        filename = file_path.split("/")[-1]
+        blob = self.bucket.blob(f"data/bank_htmls/{filename}")  # type: ignore
+        logger.debug(f"Uploading HTML file {file_path} to GCS")
+        blob.upload_from_filename(file_path)  # type: ignore
+        logger.info(f"Uploaded HTML file to GCS: {self.bucket.name}/data/bank_htmls/{filename}")  # type: ignore
